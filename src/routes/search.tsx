@@ -16,8 +16,8 @@ export const Route = createFileRoute("/search")({
   validateSearch: zodValidator(searchSchema),
   head: () => ({
     meta: [
-      { title: "Cari Anime — CIHUYN!ME" },
-      { name: "description", content: "Cari anime favoritmu di Cihuynime." },
+      { title: "Cari Anime — Nexzhu" },
+      { name: "description", content: "Cari Anime Favorit Kamu Hanya Di Nexzhu." },
     ],
   }),
   component: SearchPage,
@@ -69,7 +69,7 @@ function SearchPage() {
           <ArrowLeft className="h-5 w-5" />
         </Link>
         <span className="text-lg font-extrabold tracking-wider">
-          CIHUYN<span className="text-primary">!</span>ME
+          NEX<span className="text-primary">Z</span>HU
         </span>
       </header>
 
@@ -89,13 +89,13 @@ function SearchPage() {
       <section className="mt-6">
         {q.trim() === "" && (
           <p className="text-sm text-muted-foreground">
-            Ketik judul anime untuk mulai mencari.
+            Ketik Judul Anime Untuk Mencari 
           </p>
         )}
 
         {q.trim() !== "" && (
           <h1 className="mb-4 text-lg font-bold">
-            Hasil untuk:{" "}
+            Hasil Untuk:{" "}
             <span className="text-primary">"{q}"</span>
           </h1>
         )}
@@ -110,12 +110,12 @@ function SearchPage() {
 
         {isError && (
           <p className="text-sm text-destructive">
-            Gagal memuat hasil. Coba lagi sebentar — Jikan API kadang membatasi permintaan.
+            Gagal Memuat Hasil. Coba Lagi Sebentar — API Sedang Membatasi Permintaan.
           </p>
         )}
 
         {data && data.length === 0 && (
-          <p className="text-sm text-muted-foreground">Tidak ada hasil ditemukan.</p>
+          <p className="text-sm text-muted-foreground">Tidak Ada Hasil Ditemukan.</p>
         )}
 
         {data && data.length > 0 && (
@@ -154,7 +154,7 @@ function SearchPage() {
       <CommentBox />
 
       <footer className="mt-10 pb-10 text-center text-xs text-muted-foreground">
-        Data anime via Jikan (MyAnimeList)
+        Data Anime via Api
       </footer>
     </main>
   );
