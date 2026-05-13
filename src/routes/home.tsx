@@ -1,9 +1,11 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Loader2, Calendar, Star, Sparkles, ArrowLeft, Search } from "lucide-react";
+import {
+  Loader2, Calendar, Star, Sparkles, Search, Menu, Shuffle, Film, Flame, MessageSquare,
+} from "lucide-react";
 import { Spotlight } from "@/components/Spotlight";
 import {
-  PortraitGrid, LandscapeGrid, RowList, SectionTitle,
+  PortraitGrid, LandscapeGrid, RowList, SectionTitle, TrendingRow,
 } from "@/components/AnimeBlocks";
 import type { AnimeCard } from "@/lib/anime-types";
 import {
@@ -21,6 +23,70 @@ const DAYS_ID: Record<string, string> = {
   Friday: "Jumat", Saturday: "Sabtu", Sunday: "Minggu",
 };
 
+function Header() {
+  const [draft, setDraft] = useState("");
+  const nav = useNavigate();
+  const submit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const q = draft.trim();
+    if (!q) return;
+    nav({ to: "/search", search: { q } });
+  };
+  return (
+    <header className="sticky top-0 z-30 backdrop-blur-xl bg-background/80 border-b border-border">
+      <div className="max-w-7xl mx-auto px-3 sm:px-5 h-16 flex items-center gap-3">
+        <button aria-label="Menu" className="h-10 w-10 grid place-items-center rounded-lg hover:bg-secondary">
+          <Menu className="h-5 w-5" />
+        </button>
+        <Link to="/" className="text-xl font-black tracking-wider shrink-0">
+          CIHUYN<span className="text-primary">!</span>ME
+        </Link>
+        <form onSubmit={submit} className="ml-2 sm:ml-4 flex-1 max-w-md hidden sm:block">
+          <div className="relative">
+            <input
+              value={draft}
+              onChange={(e) => setDraft(e.target.value)}
+              placeholder="Mau nonton apa hari ini?..."
+              className="w-full h-10 rounded-xl bg-input/60 border border-border pl-4 pr-10 text-sm focus:outline-none focus:border-primary"
+            />
+            <button type="submit" aria-label="Cari" className="absolute right-1 top-1 h-8 w-8 grid place-items-center rounded-lg text-primary hover:bg-secondary">
+              <Search className="h-4 w-4" />
+            </button>
+          </div>
+        </form>
+        <div className="ml-auto flex items-center gap-1 sm:gap-3">
+          <Link to="/search" search={{ q: "" }} aria-label="Cari" className="sm:hidden h-10 w-10 grid place-items-center rounded-lg hover:bg-secondary">
+            <Search className="h-5 w-5" />
+          </Link>
+          <HeaderIcon icon={<Shuffle className="h-4 w-4" />} label="Random" />
+          <HeaderIcon icon={<Film className="h-4 w-4" />} label="Movie" />
+          <HeaderIcon icon={<Flame className="h-4 w-4" />} label="Popular" />
+          <a
+            href="https://discord.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hidden md:flex h-10 w-10 items-center justify-center rounded-lg bg-[#5865F2]/20 text-[#7d8af0] hover:bg-[#5865F2]/30"
+            aria-label="Discord"
+          >
+            <MessageSquare className="h-4 w-4" />
+          </a>
+        </div>
+      </div>
+    </header>
+  );
+}
+
+function HeaderIcon({ icon, label }: { icon: React.ReactNode; label: string }) {
+  return (
+    <div className="hidden md:flex flex-col items-center text-muted-foreground hover:text-primary cursor-pointer">
+      <div className="h-10 w-10 grid place-items-center rounded-full bg-secondary border border-border">
+        {icon}
+      </div>
+      <span className="text-[9px] mt-0.5 font-bold tracking-wider uppercase">{label}</span>
+    </div>
+  );
+}
+
 function Home() {
   const nav = useNavigate();
   const [loading, setLoading] = useState(true);
@@ -37,13 +103,24 @@ function Home() {
   const [genreList, setGenreList] = useState<{ title: string; genreId: string }[]>([]);
 
   useEffect(() => {
+    let alive = true;
     setLoading(true);
     (async () => {
       try {
+        const safe = <T,>(p: Promise<T>, fallback: T): Promise<T> =>
+          p.catch((e) => { console.warn("api err", e); return fallback; });
+
         const [home, pop, ong, comp, mov, sch, gen] = await Promise.all([
-          svHome(), svPopular(), svOngoing(), svCompleted(), svMovies(), svSchedule(),
-          svGenres().catch(() => []),
+          safe(svHome(), { recent: [], popular: [], top10: [] }),
+          safe(svPopular(), [] as SvAnime[]),
+          safe(svOngoing(), [] as SvAnime[]),
+          safe(svCompleted(), [] as SvAnime[]),
+          safe(svMovies(), [] as SvAnime[]),
+          safe(svSchedule(), [] as { day: string; animeList: SvAnime[] }[]),
+          safe(svGenres(), [] as { title: string; genreId: string }[]),
         ]);
+        if (!alive) return;
+
         const recentCards = home.recent.map(svToCard);
         setRecent(recentCards);
         setSpotlight(recentCards.slice(0, 6));
@@ -56,39 +133,35 @@ function Home() {
         setGenreList(gen);
         const today = new Date().toLocaleString("en-US", { weekday: "long" });
         setActiveDay(sch.find((d) => d.day === today)?.day || sch[0]?.day || "");
+
+        if (recentCards.length === 0 && pop.length === 0) {
+          setError("Tidak ada data dari server. Coba muat ulang.");
+        }
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Gagal memuat data");
+        if (alive) setError(err instanceof Error ? err.message : "Gagal memuat data");
       } finally {
-        setLoading(false);
+        if (alive) setLoading(false);
       }
     })();
+    return () => { alive = false; };
   }, []);
 
   const watchAnime = (a: AnimeCard) =>
     nav({ to: "/search", search: { q: a.title } });
 
   const todaySchedule = schedule.find((d) => d.day === activeDay)?.animeList || [];
+  const trending = popular.length ? popular.slice(0, 10) : recent.slice(0, 10);
 
   return (
     <div className="min-h-screen pb-16">
-      <header className="sticky top-0 z-30 backdrop-blur bg-background/80 border-b border-border">
-        <div className="max-w-7xl mx-auto px-3 sm:px-5 h-14 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2 text-sm font-bold hover:text-primary">
-            <ArrowLeft className="h-4 w-4" />
-            <span>CIHUYN<span className="text-primary">!</span>ME</span>
-          </Link>
-          <Link to="/search" search={{ q: "" }} className="rounded-lg p-2 hover:bg-secondary">
-            <Search className="h-5 w-5" />
-          </Link>
-        </div>
-      </header>
+      <Header />
 
-      <main className="max-w-7xl mx-auto px-3 sm:px-5 mt-4 sm:mt-6 space-y-8 sm:space-y-12">
+      <main className="max-w-7xl mx-auto px-3 sm:px-5 mt-4 sm:mt-6 space-y-10 sm:space-y-14">
         {loading ? (
           <div className="py-32 grid place-items-center">
             <Loader2 className="h-10 w-10 animate-spin text-primary" />
           </div>
-        ) : error ? (
+        ) : error && spotlight.length === 0 ? (
           <div className="py-32 text-center">
             <p className="text-destructive font-bold">Gagal memuat data anime</p>
             <p className="text-xs text-muted-foreground mt-2">{error}</p>
@@ -97,14 +170,23 @@ function Home() {
           <>
             <Spotlight items={spotlight} onWatch={watchAnime} />
 
-            <section>
-              <SectionTitle title="Episode Terbaru" />
-              <LandscapeGrid items={recent.slice(0, 12)} onClick={watchAnime} />
-            </section>
+            {trending.length > 0 && (
+              <section>
+                <SectionTitle title="Trending" />
+                <TrendingRow items={trending} onClick={watchAnime} />
+              </section>
+            )}
+
+            {recent.length > 0 && (
+              <section>
+                <SectionTitle title="Episode Terbaru" />
+                <LandscapeGrid items={recent.slice(0, 12)} onClick={watchAnime} />
+              </section>
+            )}
 
             {top10.length > 0 && (
               <section className="bg-card rounded-2xl border border-border p-4 sm:p-7">
-                <h3 className="text-2xl sm:text-3xl font-black mb-4 flex items-center gap-3">
+                <h3 className="text-xl sm:text-2xl font-black mb-4 flex items-center gap-3 uppercase tracking-wider">
                   <Sparkles className="h-6 w-6 text-primary" /> Top 10
                 </h3>
                 <ul className="grid grid-cols-1 md:grid-cols-2 gap-1.5">
@@ -135,7 +217,7 @@ function Home() {
                 { title: "Most Popular", items: popular.slice(0, 6) },
                 { title: "Selesai", items: completed.slice(0, 6) },
                 { title: "Movies", items: movies.slice(0, 6) },
-              ].map((b) => (
+              ].filter((b) => b.items.length > 0).map((b) => (
                 <div key={b.title} className="bg-card rounded-2xl border border-border p-4">
                   <SectionTitle title={b.title} />
                   <RowList items={b.items} onClick={watchAnime} />
@@ -143,15 +225,17 @@ function Home() {
               ))}
             </section>
 
-            <section>
-              <SectionTitle title="Populer" />
-              <PortraitGrid items={popular.slice(0, 12)} onClick={watchAnime} withRank />
-            </section>
+            {popular.length > 0 && (
+              <section>
+                <SectionTitle title="Populer" />
+                <PortraitGrid items={popular.slice(0, 12)} onClick={watchAnime} />
+              </section>
+            )}
 
             {schedule.length > 0 && (
               <section className="bg-card rounded-2xl border border-border p-4 sm:p-7">
                 <SectionTitle title="Jadwal Tayang" />
-                <div className="flex gap-2 overflow-x-auto pb-3 mb-4 -mx-1 px-1">
+                <div className="flex gap-2 overflow-x-auto pb-3 mb-4 -mx-1 px-1 scrollbar-hide">
                   {schedule.map((d) => (
                     <button
                       key={d.day}
@@ -208,8 +292,15 @@ function Home() {
           </>
         )}
 
-        <footer className="pt-6 border-t border-border text-center text-xs text-muted-foreground">
-          © {new Date().getFullYear()} Cihuynime — data via Sankavollerei API.
+        <footer className="pt-6 border-t border-border text-center text-xs text-muted-foreground space-y-2">
+          <div className="flex items-center justify-center gap-4">
+            <Link to="/" className="hover:text-primary">Home</Link>
+            <span>·</span>
+            <Link to="/search" search={{ q: "" }} className="hover:text-primary">Cari</Link>
+            <span>·</span>
+            <a href="https://discord.com/" target="_blank" rel="noreferrer" className="hover:text-primary">Discord</a>
+          </div>
+          <p>© {new Date().getFullYear()} Cihuynime — data via Sankavollerei API.</p>
         </footer>
       </main>
     </div>
