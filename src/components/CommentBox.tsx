@@ -105,7 +105,7 @@ export function CommentBox() {
           </div>
         ) : (
           <Button size="sm" onClick={() => signInGoogle()}>
-            Masuk dengan Google
+            Masuk Dengan Google
           </Button>
         )}
       </div>
@@ -125,7 +125,7 @@ export function CommentBox() {
       <ul className="space-y-3">
         {comments.length === 0 && (
           <li className="text-sm text-muted-foreground">
-            Belum ada komentar. Jadilah yang pertama!
+            Belum Ada Komentar. Jadilah Orang Yang Pertama!
           </li>
         )}
         {comments.map((c) => {
