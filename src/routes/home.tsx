@@ -39,7 +39,7 @@ function Header() {
           <Menu className="h-5 w-5" />
         </button>
         <Link to="/" className="text-xl font-black tracking-wider shrink-0">
-          CIHUYN<span className="text-primary">!</span>ME
+          NEX<span className="text-primary">Z</span>HU
         </Link>
         <form onSubmit={submit} className="ml-2 sm:ml-4 flex-1 max-w-md hidden sm:block">
           <div className="relative">
@@ -300,7 +300,7 @@ function Home() {
             <span>·</span>
             <a href="https://discord.com/" target="_blank" rel="noreferrer" className="hover:text-primary">Discord</a>
           </div>
-          <p>© {new Date().getFullYear()} Cihuynime — data via Sankavollerei API.</p>
+          <p>© {new Date().getFullYear()} CREATED BY NEXZHU</p>
         </footer>
       </main>
     </div>
