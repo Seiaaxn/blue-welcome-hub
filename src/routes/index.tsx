@@ -30,33 +30,33 @@ const TOP_SEARCHES = [
 
 const FAQS = [
   {
-    q: "Apakah CIHUYN!ME menyebarkan informasi pribadi pengguna?",
-    a: "Tidak. Kami tidak menjual atau membagikan data pribadimu ke pihak ketiga. Login hanya dipakai untuk fitur komentar dan personalisasi.",
+    q: "Apakah Nexzhu Menyebarkan Informasi Pribadi Pengguna?",
+    a: "Tidak. Kami Tidak Menjual Atau Membagikan Data Pribadimu Ke Pihak Ketiga. Kami Menggunakan Layanan Firebase Agar Lebih Aman",
   },
   {
-    q: "Apakah menonton di CIHUYN!ME gratis?",
-    a: "Ya, seluruh koleksi anime di CIHUYN!ME bisa kamu tonton tanpa biaya. Kamu bisa mendukung kami melalui tombol SUPPORT US.",
+    q: "Apakah Menonton Di Nexzhu Gratis?",
+    a: "Ya, Seluruh Koleksi Anime Di Nexzhu Bisa Kamu Tonton Secara Gratis. Kamu Bisa Mendukung Kami Melalui Tombol Support Us/Membeli Premium.",
   },
   {
-    q: "Bagaimana cara request anime baru?",
-    a: "Gabung ke server Discord kami melalui tombol DISCORD di halaman utama, lalu kirim request di channel #request-anime.",
+    q: "Bagaimana Cara Request Anime Baru?",
+    a: "Mohon Maaf Kak, Kami Tidak Bisa Menerima Request Anime. Dikarenakan Kami Menggunakan Layanan Ketiga Menggunakan Api",
   },
   {
-    q: "Kenapa video kadang lambat / buffering?",
-    a: "Coba ganti server pemutar atau turunkan kualitas video. Pastikan koneksi internetmu stabil minimal 5 Mbps untuk kualitas HD.",
+    q: "Kenapa Video Kadang Lambat/Buffering?",
+    a: "Coba Ganti Server Pemutar Atau Turunkan Kualitas Video. Pastikan Koneksi Internetmu Stabil Minimal 5 Mbps Untuk Kualitas HD.",
   },
   {
-    q: "Apakah CIHUYN!ME aman dari malware/iklan berbahaya?",
-    a: "Kami berusaha menjaga situs bersih. Jangan klik popup mencurigakan dan gunakan adblock terpercaya untuk pengalaman terbaik.",
+    q: "Apakah Nexzhu Aman Dari Malware/Iklan Berbahaya?",
+    a: "Kami bBrusaha Menjaga Situs Bersih. Jangan Klik Popup Mencurigakan Dan Gunakan Adblock Terpercaya Untuk Pengalaman Terbaik.",
   },
 ];
 
 function Logo() {
   return (
     <span className="text-xl font-extrabold tracking-wider text-foreground">
-      CIHUYN
+      NEXZ
       <span className="text-primary">!</span>
-      ME
+      HU
     </span>
   );
 }
@@ -97,11 +97,11 @@ function Welcome() {
         </div>
 
         <h1 className="mt-6 text-center text-4xl font-extrabold tracking-wider">
-          CIHUYN<span className="text-primary">!</span>ME
+          NEX<span className="text-primary">Z</span>HU
         </h1>
 
         <p className="mt-4 text-center text-lg font-semibold text-primary">
-          Selamat Datang di Markas Besar Cihuynime!
+          Selamat Datang di Markas Besar Nexzhu!
         </p>
         <p className="mx-auto mt-2 max-w-md text-center text-sm leading-relaxed text-muted-foreground">
           Platform Streaming Anime Terbaik dengan koleksi terlengkap dan server super cepat.
@@ -118,7 +118,7 @@ function Welcome() {
           <Input
             value={draft}
             onChange={(e) => setDraft(e.target.value)}
-            placeholder="Ketik judul anime..."
+            placeholder="Ketik judul anime disini..."
             className="h-14 rounded-xl bg-input/60 text-base"
           />
           <Button
@@ -202,7 +202,7 @@ function Welcome() {
       </Link>
 
       <footer className="mt-10 pb-10 text-center text-xs text-muted-foreground">
-        © {new Date().getFullYear()} Cihuynime
+        © {new Date().getFullYear()} NEXZHU 
       </footer>
     </main>
   );
