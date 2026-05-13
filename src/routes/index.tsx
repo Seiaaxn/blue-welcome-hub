@@ -31,15 +31,15 @@ const TOP_SEARCHES = [
 const FAQS = [
   {
     q: "Apakah Nexzhu Menyebarkan Informasi Pribadi Pengguna?",
-    a: "Tidak. Kami Tidak Menjual Atau Membagikan Data Pribadimu Ke Pihak Ketiga. Kami Menggunakan Layanan Firebase Agar Lebih Aman",
+    a: "Tidak. Kami Tidak Menjual Atau Membagikan Data Pribadimu Ke Pihak Ketiga. Kami Menggunakan Layanan Firebase Agar Lebih Aman.",
   },
   {
     q: "Apakah Menonton Di Nexzhu Gratis?",
-    a: "Ya, Seluruh Koleksi Anime Di Nexzhu Bisa Kamu Tonton Secara Gratis. Kamu Bisa Mendukung Kami Melalui Tombol Support Us/Membeli Premium.",
+    a: "Ya, Seluruh Koleksi Anime Di Nexzhu Bisa Kamu Tonton Secara Gratis. Kamu Bisa Mendukung Kami Melalui Tombol Support Us Atau Membeli Premium Ke Admin.",
   },
   {
     q: "Bagaimana Cara Request Anime Baru?",
-    a: "Mohon Maaf Kak, Kami Tidak Bisa Menerima Request Anime. Dikarenakan Kami Menggunakan Layanan Ketiga Menggunakan Api",
+    a: "Mohon Maaf Kak, Kami Tidak Bisa Menerima Request Anime. Dikarenakan Kami Menggunakan Layanan Ketiga.",
   },
   {
     q: "Kenapa Video Kadang Lambat/Buffering?",
@@ -47,7 +47,7 @@ const FAQS = [
   },
   {
     q: "Apakah Nexzhu Aman Dari Malware/Iklan Berbahaya?",
-    a: "Kami bBrusaha Menjaga Situs Bersih. Jangan Klik Popup Mencurigakan Dan Gunakan Adblock Terpercaya Untuk Pengalaman Terbaik.",
+    a: "Kami Brusaha Menjaga Situs Bersih. Jangan Klik Popup Mencurigakan Dan Gunakan Adblock Terpercaya Untuk Pengalaman Terbaik.",
   },
 ];
 
@@ -101,11 +101,11 @@ function Welcome() {
         </h1>
 
         <p className="mt-4 text-center text-lg font-semibold text-primary">
-          Selamat Datang di Markas Besar Nexzhu!
+          Selamat Datang Di Markas Besar Nexzhu!
         </p>
         <p className="mx-auto mt-2 max-w-md text-center text-sm leading-relaxed text-muted-foreground">
-          Platform Streaming Anime Terbaik dengan koleksi terlengkap dan server super cepat.
-          Cari, tonton, dan nikmati petualanganmu!
+          Platform Streaming Anime Terbaik Dengan Koleksi Terlengkap Dan Server Super Cepat.
+          Cari, Tonton, Dan Nikmati Petualanganmu!
         </p>
 
         <form
