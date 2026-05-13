@@ -1,11 +1,21 @@
 import { useEffect, useState } from "react";
-import { ref, push, onValue, serverTimestamp, query, limitToLast } from "firebase/database";
+import {
+  ref,
+  push,
+  onValue,
+  serverTimestamp,
+  query,
+  limitToLast,
+  set,
+  remove,
+} from "firebase/database";
+import { Heart, MessageCircle } from "lucide-react";
 import { db } from "@/lib/firebase";
 import { useAuth } from "@/lib/useAuth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
-type Comment = {
+type Reply = {
   id: string;
   uid: string;
   name: string;
@@ -14,10 +24,23 @@ type Comment = {
   ts: number;
 };
 
+type Comment = {
+  id: string;
+  uid: string;
+  name: string;
+  photo?: string | null;
+  text: string;
+  ts: number;
+  likes?: Record<string, true>;
+  replies?: Record<string, Omit<Reply, "id">>;
+};
+
 export function CommentBox() {
   const { user, signInGoogle, logout } = useAuth();
   const [comments, setComments] = useState<Comment[]>([]);
   const [text, setText] = useState("");
+  const [openReply, setOpenReply] = useState<string | null>(null);
+  const [replyText, setReplyText] = useState("");
 
   useEffect(() => {
     const q = query(ref(db, "comments"), limitToLast(50));
@@ -42,6 +65,28 @@ export function CommentBox() {
       ts: serverTimestamp(),
     });
     setText("");
+  };
+
+  const toggleLike = async (c: Comment) => {
+    if (!user) return signInGoogle();
+    const liked = c.likes?.[user.uid];
+    const likeRef = ref(db, `comments/${c.id}/likes/${user.uid}`);
+    if (liked) await remove(likeRef);
+    else await set(likeRef, true);
+  };
+
+  const sendReply = async (e: React.FormEvent, commentId: string) => {
+    e.preventDefault();
+    if (!user || !replyText.trim()) return;
+    await push(ref(db, `comments/${commentId}/replies`), {
+      uid: user.uid,
+      name: user.displayName ?? "Anon",
+      photo: user.photoURL ?? null,
+      text: replyText.trim().slice(0, 500),
+      ts: serverTimestamp(),
+    });
+    setReplyText("");
+    setOpenReply(null);
   };
 
   return (
@@ -79,21 +124,90 @@ export function CommentBox() {
 
       <ul className="space-y-3">
         {comments.length === 0 && (
-          <li className="text-sm text-muted-foreground">Belum ada komentar. Jadilah yang pertama!</li>
-        )}
-        {comments.map((c) => (
-          <li key={c.id} className="flex gap-3 rounded-lg bg-background/60 p-3">
-            {c.photo ? (
-              <img src={c.photo} alt="" className="h-8 w-8 rounded-full" />
-            ) : (
-              <div className="h-8 w-8 rounded-full bg-primary/30" />
-            )}
-            <div className="flex-1">
-              <div className="text-sm font-semibold text-foreground">{c.name}</div>
-              <div className="text-sm text-muted-foreground">{c.text}</div>
-            </div>
+          <li className="text-sm text-muted-foreground">
+            Belum ada komentar. Jadilah yang pertama!
           </li>
-        ))}
+        )}
+        {comments.map((c) => {
+          const likeCount = c.likes ? Object.keys(c.likes).length : 0;
+          const liked = !!(user && c.likes?.[user.uid]);
+          const replies: Reply[] = c.replies
+            ? Object.entries(c.replies)
+                .map(([id, r]) => ({ id, ...r }))
+                .sort((a, b) => (a.ts ?? 0) - (b.ts ?? 0))
+            : [];
+
+          return (
+            <li key={c.id} className="rounded-lg bg-background/60 p-3">
+              <div className="flex gap-3">
+                {c.photo ? (
+                  <img src={c.photo} alt="" className="h-8 w-8 shrink-0 rounded-full" />
+                ) : (
+                  <div className="h-8 w-8 shrink-0 rounded-full bg-primary/30" />
+                )}
+                <div className="flex-1">
+                  <div className="text-sm font-semibold text-foreground">{c.name}</div>
+                  <div className="text-sm text-muted-foreground">{c.text}</div>
+
+                  <div className="mt-2 flex items-center gap-3 text-xs">
+                    <button
+                      onClick={() => toggleLike(c)}
+                      className={`flex items-center gap-1 transition ${
+                        liked ? "text-destructive" : "text-muted-foreground hover:text-foreground"
+                      }`}
+                    >
+                      <Heart className={`h-4 w-4 ${liked ? "fill-destructive" : ""}`} />
+                      {likeCount}
+                    </button>
+                    <button
+                      onClick={() => {
+                        if (!user) return signInGoogle();
+                        setOpenReply(openReply === c.id ? null : c.id);
+                        setReplyText("");
+                      }}
+                      className="flex items-center gap-1 text-muted-foreground transition hover:text-foreground"
+                    >
+                      <MessageCircle className="h-4 w-4" /> Balas
+                    </button>
+                  </div>
+
+                  {openReply === c.id && user && (
+                    <form onSubmit={(e) => sendReply(e, c.id)} className="mt-2 flex gap-2">
+                      <Input
+                        value={replyText}
+                        onChange={(e) => setReplyText(e.target.value)}
+                        placeholder={`Balas ke ${c.name}...`}
+                        maxLength={500}
+                        autoFocus
+                      />
+                      <Button type="submit" size="sm">
+                        Kirim
+                      </Button>
+                    </form>
+                  )}
+
+                  {replies.length > 0 && (
+                    <ul className="mt-3 space-y-2 border-l-2 border-border pl-3">
+                      {replies.map((r) => (
+                        <li key={r.id} className="flex gap-2">
+                          {r.photo ? (
+                            <img src={r.photo} alt="" className="h-6 w-6 shrink-0 rounded-full" />
+                          ) : (
+                            <div className="h-6 w-6 shrink-0 rounded-full bg-primary/30" />
+                          )}
+                          <div>
+                            <div className="text-xs font-semibold">{r.name}</div>
+                            <div className="text-xs text-muted-foreground">{r.text}</div>
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              </div>
+            </li>
+          );
+        })}
       </ul>
     </section>
   );

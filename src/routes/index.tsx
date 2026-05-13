@@ -1,8 +1,14 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { ArrowRight, Heart, Search, Menu } from "lucide-react";
+import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
+import { useState } from "react";
+import { ArrowRight, Heart, Search, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { CommentBox } from "@/components/CommentBox";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import heroImg from "@/assets/hero-anime.jpg";
 
 export const Route = createFileRoute("/")({
@@ -11,15 +17,38 @@ export const Route = createFileRoute("/")({
 
 const TOP_SEARCHES = [
   "Attack on Titan",
-  "Demon Slayer: Kimetsu no Yaiba",
-  "JUJUTSU KAISEN",
+  "Demon Slayer",
+  "Jujutsu Kaisen",
   "Death Note",
   "My Hero Academia",
-  "Hunter x Hunter (2011)",
-  "One-Punch Man",
+  "Hunter x Hunter",
+  "One Punch Man",
   "Tokyo Ghoul",
-  "Attack on Titan Season 2",
-  "ONE PIECE",
+  "Naruto",
+  "One Piece",
+];
+
+const FAQS = [
+  {
+    q: "Apakah CIHUYN!ME menyebarkan informasi pribadi pengguna?",
+    a: "Tidak. Kami tidak menjual atau membagikan data pribadimu ke pihak ketiga. Login hanya dipakai untuk fitur komentar dan personalisasi.",
+  },
+  {
+    q: "Apakah menonton di CIHUYN!ME gratis?",
+    a: "Ya, seluruh koleksi anime di CIHUYN!ME bisa kamu tonton tanpa biaya. Kamu bisa mendukung kami melalui tombol SUPPORT US.",
+  },
+  {
+    q: "Bagaimana cara request anime baru?",
+    a: "Gabung ke server Discord kami melalui tombol DISCORD di halaman utama, lalu kirim request di channel #request-anime.",
+  },
+  {
+    q: "Kenapa video kadang lambat / buffering?",
+    a: "Coba ganti server pemutar atau turunkan kualitas video. Pastikan koneksi internetmu stabil minimal 5 Mbps untuk kualitas HD.",
+  },
+  {
+    q: "Apakah CIHUYN!ME aman dari malware/iklan berbahaya?",
+    a: "Kami berusaha menjaga situs bersih. Jangan klik popup mencurigakan dan gunakan adblock terpercaya untuk pengalaman terbaik.",
+  },
 ];
 
 function Logo() {
@@ -33,20 +62,29 @@ function Logo() {
 }
 
 function Welcome() {
+  const navigate = useNavigate();
+  const [draft, setDraft] = useState("");
+
+  const goSearch = (q: string) => {
+    const term = q.trim();
+    if (!term) return;
+    navigate({ to: "/search", search: { q: term } });
+  };
+
   return (
     <main className="mx-auto max-w-2xl px-4 py-6">
-      {/* Top nav card */}
       <header className="flex items-center justify-between rounded-2xl border border-border bg-card/70 px-5 py-4 backdrop-blur">
         <Logo />
-        <button
-          aria-label="Menu"
+        <Link
+          to="/search"
+          search={{ q: "" }}
+          aria-label="Cari"
           className="rounded-lg p-2 text-foreground/80 hover:bg-secondary"
         >
-          <Menu className="h-5 w-5" />
-        </button>
+          <Search className="h-5 w-5" />
+        </Link>
       </header>
 
-      {/* Hero card */}
       <section className="mt-5 rounded-2xl border border-border bg-card/70 p-5 backdrop-blur">
         <div className="overflow-hidden rounded-xl">
           <img
@@ -66,16 +104,20 @@ function Welcome() {
           Selamat Datang di Markas Besar Cihuynime!
         </p>
         <p className="mx-auto mt-2 max-w-md text-center text-sm leading-relaxed text-muted-foreground">
-          Platform Streaming Anime Terbaik dengan koleksi terlengkap dan server
-          super cepat. Cari, tonton, dan nikmati petualanganmu!
+          Platform Streaming Anime Terbaik dengan koleksi terlengkap dan server super cepat.
+          Cari, tonton, dan nikmati petualanganmu!
         </p>
 
-        {/* Search */}
         <form
-          onSubmit={(e) => e.preventDefault()}
+          onSubmit={(e) => {
+            e.preventDefault();
+            goSearch(draft);
+          }}
           className="mt-6 flex items-center gap-3"
         >
           <Input
+            value={draft}
+            onChange={(e) => setDraft(e.target.value)}
             placeholder="Ketik judul anime..."
             className="h-14 rounded-xl bg-input/60 text-base"
           />
@@ -92,38 +134,72 @@ function Welcome() {
           <span className="font-bold tracking-wide text-primary">TOP SEARCH:</span>{" "}
           {TOP_SEARCHES.map((t, i) => (
             <span key={t}>
-              <a href="#" className="hover:text-foreground">
+              <button
+                type="button"
+                onClick={() => goSearch(t)}
+                className="hover:text-foreground hover:underline"
+              >
                 {t}
-              </a>
+              </button>
               {i < TOP_SEARCHES.length - 1 ? ", " : ""}
             </span>
           ))}
         </p>
 
-        {/* CTAs */}
         <div className="mt-7 space-y-3">
-          <Button className="h-14 w-full rounded-xl text-base font-bold tracking-wider glow-primary">
+          <Button
+            onClick={() => navigate({ to: "/search", search: { q: "" } })}
+            className="h-14 w-full rounded-xl text-base font-bold tracking-wider glow-primary"
+          >
             MULAI NONTON <ArrowRight className="ml-2 h-5 w-5" />
           </Button>
-          <button className="flex h-14 w-full items-center justify-center gap-2 rounded-xl border border-destructive/40 bg-destructive/10 text-sm font-bold tracking-wider text-destructive transition hover:bg-destructive/20">
+          <a
+            href="https://trakteer.id/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex h-14 w-full items-center justify-center gap-2 rounded-xl border border-destructive/40 bg-destructive/10 text-sm font-bold tracking-wider text-destructive transition hover:bg-destructive/20"
+          >
             <Heart className="h-5 w-5 fill-destructive" /> SUPPORT US
-          </button>
-          <button className="flex h-14 w-full items-center justify-center gap-2 rounded-xl border border-primary/30 bg-primary/10 text-sm font-bold tracking-wider text-primary transition hover:bg-primary/20">
+          </a>
+          <a
+            href="https://discord.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex h-14 w-full items-center justify-center gap-2 rounded-xl border border-primary/30 bg-primary/10 text-sm font-bold tracking-wider text-primary transition hover:bg-primary/20"
+          >
             <DiscordIcon /> DISCORD
-          </button>
+          </a>
         </div>
       </section>
 
-      {/* FAQ banner */}
-      <section className="mt-5 flex items-center gap-3 rounded-2xl border border-border bg-card/70 px-5 py-5 backdrop-blur">
-        <span className="h-6 w-1.5 rounded-full bg-primary" />
-        <h2 className="text-base font-bold tracking-wider text-foreground">
-          PAPAN INFORMASI (FAQ)
-        </h2>
+      <section className="mt-5 rounded-2xl border border-border bg-card/70 px-5 py-4 backdrop-blur">
+        <div className="mb-2 flex items-center gap-3">
+          <span className="h-6 w-1.5 rounded-full bg-primary" />
+          <h2 className="text-base font-bold tracking-wider text-foreground">
+            PAPAN INFORMASI (FAQ)
+          </h2>
+        </div>
+        <Accordion type="single" collapsible className="w-full">
+          {FAQS.map((f, i) => (
+            <AccordionItem key={i} value={`faq-${i}`} className="border-border">
+              <AccordionTrigger className="text-left text-sm font-semibold">
+                {f.q}
+              </AccordionTrigger>
+              <AccordionContent className="text-sm text-muted-foreground">
+                {f.a}
+              </AccordionContent>
+            </AccordionItem>
+          ))}
+        </Accordion>
       </section>
 
-      {/* Comments via Firebase */}
-      <CommentBox />
+      <Link
+        to="/search"
+        search={{ q: "" }}
+        className="mt-5 flex items-center justify-center gap-2 rounded-2xl border border-border bg-card/70 px-5 py-4 text-sm font-bold tracking-wider text-primary backdrop-blur transition hover:bg-card"
+      >
+        <MessageCircle className="h-5 w-5" /> KOMENTAR & DISKUSI
+      </Link>
 
       <footer className="mt-10 pb-10 text-center text-xs text-muted-foreground">
         © {new Date().getFullYear()} Cihuynime
