@@ -148,7 +148,7 @@ function Welcome() {
 
         <div className="mt-7 space-y-3">
           <Button
-            onClick={() => navigate({ to: "/search", search: { q: "" } })}
+            onClick={() => navigate({ to: "/home" })}
             className="h-14 w-full rounded-xl text-base font-bold tracking-wider glow-primary"
           >
             MULAI NONTON <ArrowRight className="ml-2 h-5 w-5" />
