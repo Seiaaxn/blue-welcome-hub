@@ -47,7 +47,7 @@ const FAQS = [
   },
   {
     q: "Apakah Nexzhu Aman Dari Malware/Iklan Berbahaya?",
-    a: "Kami Brusaha Menjaga Situs Bersih. Jangan Klik Popup Mencurigakan Dan Gunakan Adblock Terpercaya Untuk Pengalaman Terbaik.",
+    a: "Kami Berusaha Menjaga Situs Bersih. Jangan Klik Popup Mencurigakan Dan Gunakan Adblock Terpercaya Untuk Pengalaman Terbaik.",
   },
 ];
 
