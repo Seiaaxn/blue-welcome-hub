@@ -148,8 +148,10 @@ function Home() {
     return () => { alive = false; };
   }, []);
 
-  const watchAnime = (a: AnimeCard) =>
-    nav({ to: "/search", search: { q: a.title } });
+  const watchAnime = (a: AnimeCard) => {
+    const animeId = a.id.startsWith("sv-") ? a.id.slice(3) : a.id;
+    nav({ to: "/anime/$animeId", params: { animeId } });
+  };
 
   const todaySchedule = schedule.find((d) => d.day === activeDay)?.animeList || [];
   const trending = popular.length ? popular.slice(0, 10) : recent.slice(0, 10);
@@ -161,23 +163,24 @@ function Home() {
 
   const onRandom = () => {
     const pool = [...popular, ...recent, ...ongoing];
-    if (!pool.length) return toast.info("Data belum siap, coba lagi sebentar.");
+    if (!pool.length) { toast.info("Data belum siap, coba lagi sebentar."); return; }
     const a = pool[Math.floor(Math.random() * pool.length)];
     toast.success(`Random: ${a.title}`);
     watchAnime(a);
   };
   const onMovie = () => {
-    if (!movies.length) return toast.info("Movies belum tersedia.");
+    if (!movies.length) { toast.info("Movies belum tersedia."); return; }
     scrollToId("section-movies");
   };
   const onPopular = () => {
-    if (!popular.length) return toast.info("Popular belum tersedia.");
+    if (!popular.length) { toast.info("Popular belum tersedia."); return; }
     scrollToId("section-popular");
   };
+  const onGenre = (g: string) => nav({ to: "/search", search: { q: g } });
 
   return (
     <div className="min-h-screen pb-16">
-      <Header onRandom={onRandom} onMovie={onMovie} onPopular={onPopular} />
+      <Header onRandom={onRandom} onMovie={onMovie} onPopular={onPopular} onGenre={onGenre} />
 
       <main className="max-w-7xl mx-auto px-3 sm:px-5 mt-4 sm:mt-6 space-y-10 sm:space-y-14">
         {loading ? (
