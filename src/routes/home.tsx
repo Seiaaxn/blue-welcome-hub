@@ -108,19 +108,21 @@ function Home() {
     setLoading(true);
     (async () => {
       try {
-        const safe = <T,>(p: Promise<T>, fallback: T): Promise<T> =>
-          p.catch((e) => { console.warn("api err", e); return fallback; });
+        const failed: string[] = [];
+        const safe = <T,>(name: string, p: Promise<T>, fallback: T): Promise<T> =>
+          p.catch((e) => { console.warn("api err", name, e); failed.push(name); return fallback; });
 
         const [home, pop, ong, comp, mov, sch, gen] = await Promise.all([
-          safe(svHome(), { recent: [], popular: [], top10: [] }),
-          safe(svPopular(), [] as SvAnime[]),
-          safe(svOngoing(), [] as SvAnime[]),
-          safe(svCompleted(), [] as SvAnime[]),
-          safe(svMovies(), [] as SvAnime[]),
-          safe(svSchedule(), [] as { day: string; animeList: SvAnime[] }[]),
-          safe(svGenres(), [] as { title: string; genreId: string }[]),
+          safe("Home", svHome(), { recent: [], popular: [], top10: [] }),
+          safe("Popular", svPopular(), [] as SvAnime[]),
+          safe("Ongoing", svOngoing(), [] as SvAnime[]),
+          safe("Completed", svCompleted(), [] as SvAnime[]),
+          safe("Movies", svMovies(), [] as SvAnime[]),
+          safe("Schedule", svSchedule(), [] as { day: string; animeList: SvAnime[] }[]),
+          safe("Genres", svGenres(), [] as { title: string; genreId: string }[]),
         ]);
         if (!alive) return;
+        if (failed.length) toast.error(`Beberapa data gagal dimuat: ${failed.join(", ")}`);
 
         const recentCards = home.recent.map(svToCard);
         setRecent(recentCards);
