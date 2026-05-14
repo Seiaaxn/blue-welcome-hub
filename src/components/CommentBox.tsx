@@ -10,6 +10,7 @@ import {
   remove,
 } from "firebase/database";
 import { Heart, MessageCircle } from "lucide-react";
+import { toast } from "sonner";
 import { db } from "@/lib/firebase";
 import { useAuth } from "@/lib/useAuth";
 import { Button } from "@/components/ui/button";
