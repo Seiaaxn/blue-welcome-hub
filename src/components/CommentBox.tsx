@@ -69,7 +69,10 @@ export function CommentBox() {
   };
 
   const toggleLike = async (c: Comment) => {
-    if (!user) return signInGoogle();
+    if (!user) {
+      toast.error("Silakan login terlebih dahulu untuk menyukai komentar.");
+      return signInGoogle();
+    }
     const liked = c.likes?.[user.uid];
     const likeRef = ref(db, `comments/${c.id}/likes/${user.uid}`);
     if (liked) await remove(likeRef);
