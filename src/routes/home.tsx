@@ -153,9 +153,30 @@ function Home() {
   const todaySchedule = schedule.find((d) => d.day === activeDay)?.animeList || [];
   const trending = popular.length ? popular.slice(0, 10) : recent.slice(0, 10);
 
+  const scrollToId = (id: string) => {
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  const onRandom = () => {
+    const pool = [...popular, ...recent, ...ongoing];
+    if (!pool.length) return toast.info("Data belum siap, coba lagi sebentar.");
+    const a = pool[Math.floor(Math.random() * pool.length)];
+    toast.success(`Random: ${a.title}`);
+    watchAnime(a);
+  };
+  const onMovie = () => {
+    if (!movies.length) return toast.info("Movies belum tersedia.");
+    scrollToId("section-movies");
+  };
+  const onPopular = () => {
+    if (!popular.length) return toast.info("Popular belum tersedia.");
+    scrollToId("section-popular");
+  };
+
   return (
     <div className="min-h-screen pb-16">
-      <Header />
+      <Header onRandom={onRandom} onMovie={onMovie} onPopular={onPopular} />
 
       <main className="max-w-7xl mx-auto px-3 sm:px-5 mt-4 sm:mt-6 space-y-10 sm:space-y-14">
         {loading ? (
