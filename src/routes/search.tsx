@@ -36,6 +36,7 @@ type Anime = {
 function SearchPage() {
   const { q } = Route.useSearch();
   const navigate = useNavigate({ from: "/search" });
+  const router = useRouter();
   const [draft, setDraft] = useState(q);
 
   const { data, isLoading, isError } = useQuery({
