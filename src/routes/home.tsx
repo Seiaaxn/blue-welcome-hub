@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import {
   Loader2, Calendar, Star, Sparkles, Search, Menu, Shuffle, Film, Flame, MessageSquare,
 } from "lucide-react";
+import { toast } from "sonner";
 import { Spotlight } from "@/components/Spotlight";
 import {
   PortraitGrid, LandscapeGrid, RowList, SectionTitle, TrendingRow,
