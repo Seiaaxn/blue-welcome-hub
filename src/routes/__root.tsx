@@ -10,6 +10,7 @@ import {
 
 import appCss from "../styles.css?url";
 import { AuthProvider } from "@/lib/useAuth";
+import { Toaster } from "@/components/ui/sonner";
 
 function NotFoundComponent() {
   return (
@@ -83,10 +84,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:site", content: "@Lovable" },
     ],
     links: [
-      {
-        rel: "stylesheet",
-        href: appCss,
-      },
+      { rel: "stylesheet", href: appCss },
+      { rel: "icon", type: "image/png", href: "https://upload.yilzicode.com/download/d/31ffnyfvmwdudhl5" },
+      { rel: "shortcut icon", href: "https://upload.yilzicode.com/download/d/31ffnyfvmwdudhl5" },
     ],
   }),
   shellComponent: RootShell,
@@ -116,6 +116,7 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <Outlet />
+        <Toaster richColors position="top-center" />
       </AuthProvider>
     </QueryClientProvider>
   );

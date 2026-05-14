@@ -10,6 +10,7 @@ import {
   remove,
 } from "firebase/database";
 import { Heart, MessageCircle } from "lucide-react";
+import { toast } from "sonner";
 import { db } from "@/lib/firebase";
 import { useAuth } from "@/lib/useAuth";
 import { Button } from "@/components/ui/button";
@@ -68,7 +69,10 @@ export function CommentBox() {
   };
 
   const toggleLike = async (c: Comment) => {
-    if (!user) return signInGoogle();
+    if (!user) {
+      toast.error("Silakan login terlebih dahulu untuk menyukai komentar.");
+      return signInGoogle();
+    }
     const liked = c.likes?.[user.uid];
     const likeRef = ref(db, `comments/${c.id}/likes/${user.uid}`);
     if (liked) await remove(likeRef);
@@ -161,7 +165,10 @@ export function CommentBox() {
                     </button>
                     <button
                       onClick={() => {
-                        if (!user) return signInGoogle();
+                        if (!user) {
+                          toast.error("Login dulu untuk membalas komentar.");
+                          return signInGoogle();
+                        }
                         setOpenReply(openReply === c.id ? null : c.id);
                         setReplyText("");
                       }}

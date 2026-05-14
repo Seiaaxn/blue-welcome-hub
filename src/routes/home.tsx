@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import {
   Loader2, Calendar, Star, Sparkles, Search, Menu, Shuffle, Film, Flame, MessageSquare,
 } from "lucide-react";
+import { toast } from "sonner";
 import { Spotlight } from "@/components/Spotlight";
 import {
   PortraitGrid, LandscapeGrid, RowList, SectionTitle, TrendingRow,
@@ -23,7 +24,7 @@ const DAYS_ID: Record<string, string> = {
   Friday: "Jumat", Saturday: "Sabtu", Sunday: "Minggu",
 };
 
-function Header() {
+function Header({ onRandom, onMovie, onPopular }: { onRandom: () => void; onMovie: () => void; onPopular: () => void }) {
   const [draft, setDraft] = useState("");
   const nav = useNavigate();
   const submit = (e: React.FormEvent) => {
@@ -35,9 +36,9 @@ function Header() {
   return (
     <header className="sticky top-0 z-30 backdrop-blur-xl bg-background/80 border-b border-border">
       <div className="max-w-7xl mx-auto px-3 sm:px-5 h-16 flex items-center gap-3">
-        <button aria-label="Menu" className="h-10 w-10 grid place-items-center rounded-lg hover:bg-secondary">
+        <Link to="/" aria-label="Beranda" className="h-10 w-10 grid place-items-center rounded-lg hover:bg-secondary">
           <Menu className="h-5 w-5" />
-        </button>
+        </Link>
         <Link to="/" className="text-xl font-black tracking-wider shrink-0">
           NEX<span className="text-primary">Z</span>HU
         </Link>
@@ -58,9 +59,9 @@ function Header() {
           <Link to="/search" search={{ q: "" }} aria-label="Cari" className="sm:hidden h-10 w-10 grid place-items-center rounded-lg hover:bg-secondary">
             <Search className="h-5 w-5" />
           </Link>
-          <HeaderIcon icon={<Shuffle className="h-4 w-4" />} label="Random" />
-          <HeaderIcon icon={<Film className="h-4 w-4" />} label="Movie" />
-          <HeaderIcon icon={<Flame className="h-4 w-4" />} label="Popular" />
+          <HeaderIcon icon={<Shuffle className="h-4 w-4" />} label="Random" onClick={onRandom} />
+          <HeaderIcon icon={<Film className="h-4 w-4" />} label="Movie" onClick={onMovie} />
+          <HeaderIcon icon={<Flame className="h-4 w-4" />} label="Popular" onClick={onPopular} />
           <a
             href="https://discord.com/"
             target="_blank"
@@ -76,14 +77,14 @@ function Header() {
   );
 }
 
-function HeaderIcon({ icon, label }: { icon: React.ReactNode; label: string }) {
+function HeaderIcon({ icon, label, onClick }: { icon: React.ReactNode; label: string; onClick?: () => void }) {
   return (
-    <div className="hidden md:flex flex-col items-center text-muted-foreground hover:text-primary cursor-pointer">
+    <button onClick={onClick} className="hidden md:flex flex-col items-center text-muted-foreground hover:text-primary cursor-pointer">
       <div className="h-10 w-10 grid place-items-center rounded-full bg-secondary border border-border">
         {icon}
       </div>
       <span className="text-[9px] mt-0.5 font-bold tracking-wider uppercase">{label}</span>
-    </div>
+    </button>
   );
 }
 
@@ -107,19 +108,21 @@ function Home() {
     setLoading(true);
     (async () => {
       try {
-        const safe = <T,>(p: Promise<T>, fallback: T): Promise<T> =>
-          p.catch((e) => { console.warn("api err", e); return fallback; });
+        const failed: string[] = [];
+        const safe = <T,>(name: string, p: Promise<T>, fallback: T): Promise<T> =>
+          p.catch((e) => { console.warn("api err", name, e); failed.push(name); return fallback; });
 
         const [home, pop, ong, comp, mov, sch, gen] = await Promise.all([
-          safe(svHome(), { recent: [], popular: [], top10: [] }),
-          safe(svPopular(), [] as SvAnime[]),
-          safe(svOngoing(), [] as SvAnime[]),
-          safe(svCompleted(), [] as SvAnime[]),
-          safe(svMovies(), [] as SvAnime[]),
-          safe(svSchedule(), [] as { day: string; animeList: SvAnime[] }[]),
-          safe(svGenres(), [] as { title: string; genreId: string }[]),
+          safe("Home", svHome(), { recent: [], popular: [], top10: [] }),
+          safe("Popular", svPopular(), [] as SvAnime[]),
+          safe("Ongoing", svOngoing(), [] as SvAnime[]),
+          safe("Completed", svCompleted(), [] as SvAnime[]),
+          safe("Movies", svMovies(), [] as SvAnime[]),
+          safe("Schedule", svSchedule(), [] as { day: string; animeList: SvAnime[] }[]),
+          safe("Genres", svGenres(), [] as { title: string; genreId: string }[]),
         ]);
         if (!alive) return;
+        if (failed.length) toast.error(`Beberapa data gagal dimuat: ${failed.join(", ")}`);
 
         const recentCards = home.recent.map(svToCard);
         setRecent(recentCards);
@@ -152,9 +155,30 @@ function Home() {
   const todaySchedule = schedule.find((d) => d.day === activeDay)?.animeList || [];
   const trending = popular.length ? popular.slice(0, 10) : recent.slice(0, 10);
 
+  const scrollToId = (id: string) => {
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  const onRandom = () => {
+    const pool = [...popular, ...recent, ...ongoing];
+    if (!pool.length) return toast.info("Data belum siap, coba lagi sebentar.");
+    const a = pool[Math.floor(Math.random() * pool.length)];
+    toast.success(`Random: ${a.title}`);
+    watchAnime(a);
+  };
+  const onMovie = () => {
+    if (!movies.length) return toast.info("Movies belum tersedia.");
+    scrollToId("section-movies");
+  };
+  const onPopular = () => {
+    if (!popular.length) return toast.info("Popular belum tersedia.");
+    scrollToId("section-popular");
+  };
+
   return (
     <div className="min-h-screen pb-16">
-      <Header />
+      <Header onRandom={onRandom} onMovie={onMovie} onPopular={onPopular} />
 
       <main className="max-w-7xl mx-auto px-3 sm:px-5 mt-4 sm:mt-6 space-y-10 sm:space-y-14">
         {loading ? (
@@ -226,9 +250,16 @@ function Home() {
             </section>
 
             {popular.length > 0 && (
-              <section>
+              <section id="section-popular" className="scroll-mt-20">
                 <SectionTitle title="Populer" />
                 <PortraitGrid items={popular.slice(0, 12)} onClick={watchAnime} />
+              </section>
+            )}
+
+            {movies.length > 0 && (
+              <section id="section-movies" className="scroll-mt-20">
+                <SectionTitle title="Movies" />
+                <PortraitGrid items={movies.slice(0, 12)} onClick={watchAnime} />
               </section>
             )}
 
