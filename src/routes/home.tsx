@@ -289,7 +289,7 @@ function Home() {
                     {todaySchedule.map((s) => (
                       <li key={s.animeId}>
                         <button
-                          onClick={() => nav({ to: "/search", search: { q: cleanTitle(s.title) } })}
+                          onClick={() => nav({ to: "/anime/$animeId", params: { animeId: s.animeId } })}
                           className="w-full text-left flex items-center gap-3 p-3 rounded-xl bg-secondary/60 border border-border hover:border-primary transition"
                         >
                           <img src={s.poster} alt={s.title} loading="lazy" className="h-14 w-10 rounded object-cover" />
