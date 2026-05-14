@@ -248,9 +248,16 @@ function Home() {
             </section>
 
             {popular.length > 0 && (
-              <section>
+              <section id="section-popular" className="scroll-mt-20">
                 <SectionTitle title="Populer" />
                 <PortraitGrid items={popular.slice(0, 12)} onClick={watchAnime} />
+              </section>
+            )}
+
+            {movies.length > 0 && (
+              <section id="section-movies" className="scroll-mt-20">
+                <SectionTitle title="Movies" />
+                <PortraitGrid items={movies.slice(0, 12)} onClick={watchAnime} />
               </section>
             )}
 
