@@ -151,7 +151,7 @@ function SearchPage() {
         )}
       </section>
 
-      <CommentBox />
+      
 
       <footer className="mt-10 pb-10 text-center text-xs text-muted-foreground">
         Data Anime via Api
