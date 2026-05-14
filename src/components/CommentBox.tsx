@@ -165,7 +165,10 @@ export function CommentBox() {
                     </button>
                     <button
                       onClick={() => {
-                        if (!user) return signInGoogle();
+                        if (!user) {
+                          toast.error("Login dulu untuk membalas komentar.");
+                          return signInGoogle();
+                        }
                         setOpenReply(openReply === c.id ? null : c.id);
                         setReplyText("");
                       }}
