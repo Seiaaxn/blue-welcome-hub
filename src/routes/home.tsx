@@ -24,7 +24,7 @@ const DAYS_ID: Record<string, string> = {
   Friday: "Jumat", Saturday: "Sabtu", Sunday: "Minggu",
 };
 
-function Header() {
+function Header({ onRandom, onMovie, onPopular }: { onRandom: () => void; onMovie: () => void; onPopular: () => void }) {
   const [draft, setDraft] = useState("");
   const nav = useNavigate();
   const submit = (e: React.FormEvent) => {
@@ -36,9 +36,9 @@ function Header() {
   return (
     <header className="sticky top-0 z-30 backdrop-blur-xl bg-background/80 border-b border-border">
       <div className="max-w-7xl mx-auto px-3 sm:px-5 h-16 flex items-center gap-3">
-        <button aria-label="Menu" className="h-10 w-10 grid place-items-center rounded-lg hover:bg-secondary">
+        <Link to="/" aria-label="Beranda" className="h-10 w-10 grid place-items-center rounded-lg hover:bg-secondary">
           <Menu className="h-5 w-5" />
-        </button>
+        </Link>
         <Link to="/" className="text-xl font-black tracking-wider shrink-0">
           NEX<span className="text-primary">Z</span>HU
         </Link>
@@ -59,9 +59,9 @@ function Header() {
           <Link to="/search" search={{ q: "" }} aria-label="Cari" className="sm:hidden h-10 w-10 grid place-items-center rounded-lg hover:bg-secondary">
             <Search className="h-5 w-5" />
           </Link>
-          <HeaderIcon icon={<Shuffle className="h-4 w-4" />} label="Random" />
-          <HeaderIcon icon={<Film className="h-4 w-4" />} label="Movie" />
-          <HeaderIcon icon={<Flame className="h-4 w-4" />} label="Popular" />
+          <HeaderIcon icon={<Shuffle className="h-4 w-4" />} label="Random" onClick={onRandom} />
+          <HeaderIcon icon={<Film className="h-4 w-4" />} label="Movie" onClick={onMovie} />
+          <HeaderIcon icon={<Flame className="h-4 w-4" />} label="Popular" onClick={onPopular} />
           <a
             href="https://discord.com/"
             target="_blank"
@@ -77,14 +77,14 @@ function Header() {
   );
 }
 
-function HeaderIcon({ icon, label }: { icon: React.ReactNode; label: string }) {
+function HeaderIcon({ icon, label, onClick }: { icon: React.ReactNode; label: string; onClick?: () => void }) {
   return (
-    <div className="hidden md:flex flex-col items-center text-muted-foreground hover:text-primary cursor-pointer">
+    <button onClick={onClick} className="hidden md:flex flex-col items-center text-muted-foreground hover:text-primary cursor-pointer">
       <div className="h-10 w-10 grid place-items-center rounded-full bg-secondary border border-border">
         {icon}
       </div>
       <span className="text-[9px] mt-0.5 font-bold tracking-wider uppercase">{label}</span>
-    </div>
+    </button>
   );
 }
 
