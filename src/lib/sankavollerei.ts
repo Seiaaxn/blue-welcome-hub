@@ -65,6 +65,73 @@ export async function svGenres(): Promise<{ title: string; genreId: string }[]> 
   return (d?.genreList || []).map((g: any) => ({ title: g.title, genreId: g.genreId }));
 }
 
+export type SvEpisode = { title: string; episodeId: string; href?: string };
+export type SvServer = { title: string; serverId: string };
+export type SvDetail = {
+  title: string;
+  poster?: string;
+  synopsis?: string;
+  score?: string;
+  status?: string;
+  type?: string;
+  episodes?: number | string;
+  duration?: string;
+  studios?: string;
+  released?: string;
+  genres?: { title: string; genreId: string }[];
+  episodeList: SvEpisode[];
+};
+
+export async function svDetail(animeId: string): Promise<SvDetail> {
+  const d = await get<any>(`/samehadaku/anime/${animeId}`);
+  return {
+    title: d?.title || animeId,
+    poster: d?.poster,
+    synopsis: d?.synopsis?.paragraphs?.join("\n\n") || d?.synopsis || "",
+    score: d?.score?.value || d?.score,
+    status: d?.status,
+    type: d?.type,
+    episodes: d?.episodes,
+    duration: d?.duration,
+    studios: d?.studios,
+    released: d?.released,
+    genres: (d?.genreList || []).map((g: any) => ({ title: g.title, genreId: g.genreId })),
+    episodeList: (d?.episodeList || []).map((e: any) => ({
+      title: e.title,
+      episodeId: e.episodeId,
+      href: e.href,
+    })),
+  };
+}
+
+export async function svEpisode(episodeId: string): Promise<{
+  title: string;
+  poster?: string;
+  defaultStreamingUrl?: string;
+  servers: { title: string; servers: SvServer[] }[];
+  prev?: string;
+  next?: string;
+}> {
+  const d = await get<any>(`/samehadaku/episode/${episodeId}`);
+  const groups = d?.server?.qualities || [];
+  return {
+    title: d?.title || episodeId,
+    poster: d?.poster,
+    defaultStreamingUrl: d?.defaultStreamingUrl,
+    servers: groups.map((g: any) => ({
+      title: g.title,
+      servers: (g.serverList || []).map((s: any) => ({ title: s.title, serverId: s.serverId })),
+    })),
+    prev: d?.hasPrevEpisode ? d?.prevEpisode?.episodeId : undefined,
+    next: d?.hasNextEpisode ? d?.nextEpisode?.episodeId : undefined,
+  };
+}
+
+export async function svServer(serverId: string): Promise<string | undefined> {
+  const d = await get<any>(`/samehadaku/server/${serverId}`);
+  return d?.url;
+}
+
 import { cleanTitle } from "@/lib/title";
 import type { AnimeCard } from "@/lib/anime-types";
 export function svToCard(a: SvAnime): AnimeCard {

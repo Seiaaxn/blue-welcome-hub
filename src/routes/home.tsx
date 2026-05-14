@@ -1,13 +1,14 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import {
-  Loader2, Calendar, Star, Sparkles, Search, Menu, Shuffle, Film, Flame, MessageSquare,
+  Loader2, Calendar, Star, Sparkles, Search, Shuffle, Film, Flame, MessageSquare,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Spotlight } from "@/components/Spotlight";
 import {
   PortraitGrid, LandscapeGrid, RowList, SectionTitle, TrendingRow,
 } from "@/components/AnimeBlocks";
+import { SideMenu } from "@/components/SideMenu";
 import type { AnimeCard } from "@/lib/anime-types";
 import {
   svHome, svPopular, svOngoing, svCompleted, svMovies, svSchedule, svGenres,
@@ -24,7 +25,7 @@ const DAYS_ID: Record<string, string> = {
   Friday: "Jumat", Saturday: "Sabtu", Sunday: "Minggu",
 };
 
-function Header({ onRandom, onMovie, onPopular }: { onRandom: () => void; onMovie: () => void; onPopular: () => void }) {
+function Header({ onRandom, onMovie, onPopular, onGenre }: { onRandom: () => void; onMovie: () => void; onPopular: () => void; onGenre: (g: string) => void }) {
   const [draft, setDraft] = useState("");
   const nav = useNavigate();
   const submit = (e: React.FormEvent) => {
@@ -36,9 +37,7 @@ function Header({ onRandom, onMovie, onPopular }: { onRandom: () => void; onMovi
   return (
     <header className="sticky top-0 z-30 backdrop-blur-xl bg-background/80 border-b border-border">
       <div className="max-w-7xl mx-auto px-3 sm:px-5 h-16 flex items-center gap-3">
-        <Link to="/" aria-label="Beranda" className="h-10 w-10 grid place-items-center rounded-lg hover:bg-secondary">
-          <Menu className="h-5 w-5" />
-        </Link>
+        <SideMenu onRandom={onRandom} onMovies={onMovie} onPopular={onPopular} onGenre={onGenre} />
         <Link to="/" className="text-xl font-black tracking-wider shrink-0">
           NEX<span className="text-primary">Z</span>HU
         </Link>
@@ -149,8 +148,10 @@ function Home() {
     return () => { alive = false; };
   }, []);
 
-  const watchAnime = (a: AnimeCard) =>
-    nav({ to: "/search", search: { q: a.title } });
+  const watchAnime = (a: AnimeCard) => {
+    const animeId = a.id.startsWith("sv-") ? a.id.slice(3) : a.id;
+    nav({ to: "/anime/$animeId", params: { animeId } });
+  };
 
   const todaySchedule = schedule.find((d) => d.day === activeDay)?.animeList || [];
   const trending = popular.length ? popular.slice(0, 10) : recent.slice(0, 10);
@@ -162,23 +163,24 @@ function Home() {
 
   const onRandom = () => {
     const pool = [...popular, ...recent, ...ongoing];
-    if (!pool.length) return toast.info("Data belum siap, coba lagi sebentar.");
+    if (!pool.length) { toast.info("Data belum siap, coba lagi sebentar."); return; }
     const a = pool[Math.floor(Math.random() * pool.length)];
     toast.success(`Random: ${a.title}`);
     watchAnime(a);
   };
   const onMovie = () => {
-    if (!movies.length) return toast.info("Movies belum tersedia.");
+    if (!movies.length) { toast.info("Movies belum tersedia."); return; }
     scrollToId("section-movies");
   };
   const onPopular = () => {
-    if (!popular.length) return toast.info("Popular belum tersedia.");
+    if (!popular.length) { toast.info("Popular belum tersedia."); return; }
     scrollToId("section-popular");
   };
+  const onGenre = (g: string) => nav({ to: "/search", search: { q: g } });
 
   return (
     <div className="min-h-screen pb-16">
-      <Header onRandom={onRandom} onMovie={onMovie} onPopular={onPopular} />
+      <Header onRandom={onRandom} onMovie={onMovie} onPopular={onPopular} onGenre={onGenre} />
 
       <main className="max-w-7xl mx-auto px-3 sm:px-5 mt-4 sm:mt-6 space-y-10 sm:space-y-14">
         {loading ? (
@@ -287,7 +289,7 @@ function Home() {
                     {todaySchedule.map((s) => (
                       <li key={s.animeId}>
                         <button
-                          onClick={() => nav({ to: "/search", search: { q: cleanTitle(s.title) } })}
+                          onClick={() => nav({ to: "/anime/$animeId", params: { animeId: s.animeId } })}
                           className="w-full text-left flex items-center gap-3 p-3 rounded-xl bg-secondary/60 border border-border hover:border-primary transition"
                         >
                           <img src={s.poster} alt={s.title} loading="lazy" className="h-14 w-10 rounded object-cover" />

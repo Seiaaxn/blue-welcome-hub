@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, useRouter } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { zodValidator, fallback } from "@tanstack/zod-adapter";
 import { z } from "zod";
@@ -6,7 +6,6 @@ import { useState } from "react";
 import { ArrowLeft, Search, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { CommentBox } from "@/components/CommentBox";
 
 const searchSchema = z.object({
   q: fallback(z.string(), "").default(""),
@@ -37,6 +36,7 @@ type Anime = {
 function SearchPage() {
   const { q } = Route.useSearch();
   const navigate = useNavigate({ from: "/search" });
+  const router = useRouter();
   const [draft, setDraft] = useState(q);
 
   const { data, isLoading, isError } = useQuery({
@@ -61,13 +61,13 @@ function SearchPage() {
   return (
     <main className="mx-auto max-w-3xl px-4 py-6">
       <header className="mb-5 flex items-center gap-3 rounded-2xl border border-border bg-card/70 px-4 py-3 backdrop-blur">
-        <Link
-          to="/"
+        <button
+          onClick={() => router.history.back()}
           aria-label="Kembali"
           className="rounded-lg p-2 hover:bg-secondary"
         >
           <ArrowLeft className="h-5 w-5" />
-        </Link>
+        </button>
         <span className="text-lg font-extrabold tracking-wider">
           NEX<span className="text-primary">Z</span>HU
         </span>
@@ -151,7 +151,7 @@ function SearchPage() {
         )}
       </section>
 
-      <CommentBox />
+      
 
       <footer className="mt-10 pb-10 text-center text-xs text-muted-foreground">
         Data Anime via Api
