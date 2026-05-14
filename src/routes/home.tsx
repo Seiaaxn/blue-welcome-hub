@@ -25,7 +25,7 @@ const DAYS_ID: Record<string, string> = {
   Friday: "Jumat", Saturday: "Sabtu", Sunday: "Minggu",
 };
 
-function Header({ onRandom, onMovie, onPopular }: { onRandom: () => void; onMovie: () => void; onPopular: () => void }) {
+function Header({ onRandom, onMovie, onPopular, onGenre }: { onRandom: () => void; onMovie: () => void; onPopular: () => void; onGenre: (g: string) => void }) {
   const [draft, setDraft] = useState("");
   const nav = useNavigate();
   const submit = (e: React.FormEvent) => {
@@ -37,9 +37,7 @@ function Header({ onRandom, onMovie, onPopular }: { onRandom: () => void; onMovi
   return (
     <header className="sticky top-0 z-30 backdrop-blur-xl bg-background/80 border-b border-border">
       <div className="max-w-7xl mx-auto px-3 sm:px-5 h-16 flex items-center gap-3">
-        <Link to="/" aria-label="Beranda" className="h-10 w-10 grid place-items-center rounded-lg hover:bg-secondary">
-          <Menu className="h-5 w-5" />
-        </Link>
+        <SideMenu onRandom={onRandom} onMovies={onMovie} onPopular={onPopular} onGenre={onGenre} />
         <Link to="/" className="text-xl font-black tracking-wider shrink-0">
           NEX<span className="text-primary">Z</span>HU
         </Link>
