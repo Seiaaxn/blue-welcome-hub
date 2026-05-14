@@ -84,10 +84,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:site", content: "@Lovable" },
     ],
     links: [
-      {
-        rel: "stylesheet",
-        href: appCss,
-      },
+      { rel: "stylesheet", href: appCss },
+      { rel: "icon", type: "image/png", href: "https://upload.yilzicode.com/download/d/31ffnyfvmwdudhl5" },
+      { rel: "shortcut icon", href: "https://upload.yilzicode.com/download/d/31ffnyfvmwdudhl5" },
     ],
   }),
   shellComponent: RootShell,
