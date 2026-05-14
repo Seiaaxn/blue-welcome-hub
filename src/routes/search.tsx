@@ -61,13 +61,13 @@ function SearchPage() {
   return (
     <main className="mx-auto max-w-3xl px-4 py-6">
       <header className="mb-5 flex items-center gap-3 rounded-2xl border border-border bg-card/70 px-4 py-3 backdrop-blur">
-        <Link
-          to="/"
+        <button
+          onClick={() => router.history.back()}
           aria-label="Kembali"
           className="rounded-lg p-2 hover:bg-secondary"
         >
           <ArrowLeft className="h-5 w-5" />
-        </Link>
+        </button>
         <span className="text-lg font-extrabold tracking-wider">
           NEX<span className="text-primary">Z</span>HU
         </span>
