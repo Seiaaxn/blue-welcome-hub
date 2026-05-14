@@ -86,14 +86,24 @@ function Welcome() {
       </header>
 
       <section className="mt-5 rounded-2xl border border-border bg-card/70 p-5 backdrop-blur">
-        <div className="overflow-hidden rounded-xl">
+        <div className="relative overflow-hidden rounded-xl">
           <img
             src={heroImg}
-            alt="Cihuynime hero"
+            alt="Nexzhu hero"
             width={1024}
             height={768}
-            className="h-auto w-full object-cover"
+            className="h-auto w-full object-cover float-anim"
           />
+          {/* Floating animated badges (gif-like) */}
+          <span className="pointer-events-none absolute left-3 top-3 inline-flex h-8 items-center gap-1 rounded-full bg-primary/90 px-3 text-[11px] font-black text-primary-foreground shadow-lg pulse-anim">
+            ● LIVE
+          </span>
+          <span className="pointer-events-none absolute right-3 top-3 inline-flex h-8 items-center gap-1 rounded-full bg-background/80 px-3 text-[11px] font-black text-primary backdrop-blur spin-slow">
+            ★ HD
+          </span>
+          <span className="pointer-events-none absolute bottom-3 left-1/2 -translate-x-1/2 rounded-full bg-background/70 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-foreground/90 backdrop-blur bounce-anim">
+            New Episodes Daily
+          </span>
         </div>
 
         <h1 className="mt-6 text-center text-4xl font-extrabold tracking-wider">
@@ -193,16 +203,8 @@ function Welcome() {
         </Accordion>
       </section>
 
-      <Link
-        to="/search"
-        search={{ q: "" }}
-        className="mt-5 flex items-center justify-center gap-2 rounded-2xl border border-border bg-card/70 px-5 py-4 text-sm font-bold tracking-wider text-primary backdrop-blur transition hover:bg-card"
-      >
-        <MessageCircle className="h-5 w-5" /> KOMENTAR & DISKUSI
-      </Link>
-
       <footer className="mt-10 pb-10 text-center text-xs text-muted-foreground">
-        © {new Date().getFullYear()} NEXZHU 
+        © {new Date().getFullYear()} NEXZHU
       </footer>
     </main>
   );
