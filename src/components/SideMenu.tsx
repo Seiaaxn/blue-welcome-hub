@@ -142,6 +142,13 @@ export function SideMenu({
                 <SearchIcon className="h-5 w-5 text-muted-foreground" /> Cari Anime
               </Link>
             </li>
+            {user && (
+              <li>
+                <Link to="/u/$uid" params={{ uid: user.uid }} onClick={close} className="flex items-center gap-3 h-11 px-3 rounded-xl hover:bg-secondary">
+                  <LogIn className="h-5 w-5 text-muted-foreground" /> Profil Saya
+                </Link>
+              </li>
+            )}
             <li>
               <Link to="/" onClick={close} className="flex items-center gap-3 h-11 px-3 rounded-xl hover:bg-secondary">
                 <Tv className="h-5 w-5 text-muted-foreground" /> Welcome
