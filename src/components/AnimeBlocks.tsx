@@ -15,40 +15,31 @@ export const SectionTitle = ({ title, onViewMore }: { title: string; onViewMore?
   </div>
 );
 
-/* ============ TRENDING-style portrait card with sideways big number ============ */
-export const TrendingCard = ({ a, rank, onClick }: { a: AnimeCard; rank: number; onClick: (a: AnimeCard) => void }) => (
-  <button onClick={() => onClick(a)} className="group relative flex shrink-0">
-    <div className="absolute -left-2 sm:-left-3 top-0 bottom-0 flex items-center pointer-events-none z-10">
-      <span
-        className="text-5xl sm:text-7xl font-black text-foreground/95 leading-none"
-        style={{
-          writingMode: "vertical-rl",
-          transform: "rotate(180deg)",
-          WebkitTextStroke: "1.5px hsl(var(--primary))",
-        }}
-      >
-        {rank}
-      </span>
-    </div>
-    <div className="relative w-32 sm:w-40 aspect-[3/4] rounded-xl overflow-hidden bg-secondary border border-border ml-6 sm:ml-8">
-      {a.cover ? (
-        <img src={a.cover} alt={a.title} loading="lazy" className="w-full h-full object-cover group-hover:scale-110 transition duration-500" />
-      ) : (
-        <div className="w-full h-full grid place-items-center text-muted-foreground text-xs">No Image</div>
-      )}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent opacity-0 group-hover:opacity-100 transition flex items-end justify-center pb-4">
-        <span className="h-10 w-10 rounded-full bg-primary/90 grid place-items-center glow-primary">
-          <Play className="h-5 w-5 text-primary-foreground fill-current" />
-        </span>
+/* ============ TRENDING-style portrait card (no rank number) ============ */
+export const TrendingCard = ({ a, onClick }: { a: AnimeCard; onClick: (a: AnimeCard) => void }) => (
+  <button onClick={() => onClick(a)} className="group relative flex shrink-0 text-left">
+    <div className="relative w-32 sm:w-40">
+      <div className="relative w-full aspect-[3/4] rounded-xl overflow-hidden bg-secondary border border-border">
+        {a.cover ? (
+          <img src={a.cover} alt={a.title} loading="lazy" className="w-full h-full object-cover group-hover:scale-110 transition duration-500" />
+        ) : (
+          <div className="w-full h-full grid place-items-center text-muted-foreground text-xs">No Image</div>
+        )}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent opacity-0 group-hover:opacity-100 transition flex items-end justify-center pb-4">
+          <span className="h-10 w-10 rounded-full bg-primary/90 grid place-items-center glow-primary">
+            <Play className="h-5 w-5 text-primary-foreground fill-current" />
+          </span>
+        </div>
       </div>
+      <p className="text-xs sm:text-sm font-semibold mt-2 line-clamp-2 group-hover:text-primary transition">{a.title}</p>
     </div>
   </button>
 );
 
 export const TrendingRow = ({ items, onClick }: { items: AnimeCard[]; onClick: (a: AnimeCard) => void }) => (
-  <div className="flex gap-4 sm:gap-6 overflow-x-auto pb-4 -mx-1 px-1 scrollbar-hide">
-    {items.map((a, i) => (
-      <TrendingCard key={a.id} a={a} rank={i + 1} onClick={onClick} />
+  <div className="flex gap-3 sm:gap-4 overflow-x-auto pb-4 -mx-1 px-1 scrollbar-hide">
+    {items.map((a) => (
+      <TrendingCard key={a.id} a={a} onClick={onClick} />
     ))}
   </div>
 );
