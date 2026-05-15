@@ -112,11 +112,11 @@ export function SideMenu({
           <div className="grid grid-cols-2 gap-2">
             {GENRES.map((g) => (
               <button
-                key={g}
-                onClick={handle(() => onGenre?.(g))}
+                key={g.id}
+                onClick={handle(() => onGenre?.(g.id))}
                 className="h-10 rounded-xl border border-border bg-card text-sm font-bold hover:border-primary hover:text-primary"
               >
-                {g}
+                {g.label}
               </button>
             ))}
           </div>
