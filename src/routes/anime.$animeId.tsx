@@ -1,5 +1,6 @@
 import { createFileRoute, useNavigate, useRouter, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
+import { useMemo, useState } from "react";
 import { ArrowLeft, Play, Star, Calendar, Tv, Loader2 } from "lucide-react";
 import { svDetail } from "@/lib/sankavollerei";
 
@@ -16,16 +17,34 @@ export const Route = createFileRoute("/anime/$animeId")({
   ),
 });
 
+function epNum(t: string): number {
+  const m = t.match(/(\d+(?:\.\d+)?)/);
+  return m ? parseFloat(m[1]) : 0;
+}
+
 function AnimeDetail() {
   const { animeId } = Route.useParams();
   const router = useRouter();
   const nav = useNavigate();
+  const [expanded, setExpanded] = useState(false);
 
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ["anime-detail", animeId],
     queryFn: () => svDetail(animeId),
     staleTime: 5 * 60 * 1000,
   });
+
+  // Sort episodes ascending: 1 first, latest last
+  const sortedEpisodes = useMemo(() => {
+    if (!data?.episodeList) return [];
+    return [...data.episodeList].sort((a, b) => epNum(a.title) - epNum(b.title));
+  }, [data]);
+
+  const firstEp = sortedEpisodes[0];
+
+  const synopsis = data?.synopsis || "";
+  const longSynopsis = synopsis.length > 320;
+  const visibleSynopsis = expanded || !longSynopsis ? synopsis : synopsis.slice(0, 320) + "…";
 
   return (
     <div className="min-h-screen pb-16">
@@ -90,15 +109,20 @@ function AnimeDetail() {
                 {data.genres && data.genres.length > 0 && (
                   <div className="mt-3 flex flex-wrap gap-2">
                     {data.genres.map((g) => (
-                      <span key={g.genreId} className="text-[11px] px-2.5 py-1 rounded-full bg-secondary border border-border">
+                      <Link
+                        key={g.genreId}
+                        to="/genre/$genreId"
+                        params={{ genreId: g.genreId }}
+                        className="text-[11px] px-2.5 py-1 rounded-full bg-secondary border border-border hover:border-primary hover:text-primary"
+                      >
                         {g.title}
-                      </span>
+                      </Link>
                     ))}
                   </div>
                 )}
-                {data.episodeList[0] && (
+                {firstEp && (
                   <button
-                    onClick={() => nav({ to: "/watch/$episodeId", params: { episodeId: data.episodeList[0].episodeId } })}
+                    onClick={() => nav({ to: "/watch/$episodeId", params: { episodeId: firstEp.episodeId } })}
                     className="mt-5 inline-flex items-center gap-2 h-12 px-6 rounded-xl bg-primary text-primary-foreground font-bold tracking-wider glow-primary hover:opacity-90"
                   >
                     <Play className="h-5 w-5 fill-current" /> TONTON SEKARANG
@@ -107,21 +131,29 @@ function AnimeDetail() {
               </div>
             </div>
 
-            {data.synopsis && (
+            {synopsis && (
               <section className="mt-7 rounded-2xl border border-border bg-card/70 p-5">
                 <h2 className="text-base font-black tracking-wider mb-2 uppercase">Sinopsis</h2>
-                <p className="text-sm text-muted-foreground whitespace-pre-line leading-relaxed">{data.synopsis}</p>
+                <p className="text-sm text-muted-foreground whitespace-pre-line leading-relaxed">{visibleSynopsis}</p>
+                {longSynopsis && (
+                  <button
+                    onClick={() => setExpanded((v) => !v)}
+                    className="mt-2 text-xs font-bold text-primary hover:underline"
+                  >
+                    {expanded ? "Tutup" : "Baca selengkapnya"}
+                  </button>
+                )}
               </section>
             )}
 
-            {data.episodeList.length > 0 && (
+            {sortedEpisodes.length > 0 && (
               <section className="mt-6 rounded-2xl border border-border bg-card/70 p-5">
                 <h2 className="text-base font-black tracking-wider mb-3 uppercase flex items-center gap-3">
                   <span className="h-5 w-1.5 rounded-full bg-primary" />
-                  Daftar Episode ({data.episodeList.length})
+                  Daftar Episode ({sortedEpisodes.length})
                 </h2>
                 <ul className="grid grid-cols-3 sm:grid-cols-5 md:grid-cols-8 gap-2">
-                  {data.episodeList.map((e) => (
+                  {sortedEpisodes.map((e) => (
                     <li key={e.episodeId}>
                       <Link
                         to="/watch/$episodeId"

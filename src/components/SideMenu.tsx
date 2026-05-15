@@ -8,7 +8,18 @@ import { useState } from "react";
 import { useAuth } from "@/lib/useAuth";
 import { toast } from "sonner";
 
-const GENRES = ["Action", "Adventure", "Comedy", "Drama", "Fantasy", "Isekai", "Romance", "Sci-Fi", "Slice of Life", "Thriller"];
+const GENRES: { label: string; id: string }[] = [
+  { label: "Action", id: "action" },
+  { label: "Adventure", id: "adventure" },
+  { label: "Comedy", id: "comedy" },
+  { label: "Drama", id: "drama" },
+  { label: "Fantasy", id: "fantasy" },
+  { label: "Isekai", id: "isekai" },
+  { label: "Romance", id: "romance" },
+  { label: "Sci-Fi", id: "sci-fi" },
+  { label: "Slice of Life", id: "slice-of-life" },
+  { label: "Thriller", id: "thriller" },
+];
 
 export function SideMenu({
   trigger,
