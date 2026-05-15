@@ -67,7 +67,7 @@ function GenrePage() {
 
   const label = genreId
     .split("-")
-    .map((s) => s[0]?.toUpperCase() + s.slice(1))
+    .map((s: string) => s[0]?.toUpperCase() + s.slice(1))
     .join(" ");
 
   return (
