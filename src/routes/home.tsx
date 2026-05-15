@@ -176,7 +176,11 @@ function Home() {
     if (!popular.length) { toast.info("Popular belum tersedia."); return; }
     scrollToId("section-popular");
   };
-  const onGenre = (g: string) => nav({ to: "/search", search: { q: g } });
+  const onGenre = (g: string) => {
+    const found = genreList.find((x) => x.title.toLowerCase() === g.toLowerCase());
+    const id = found?.genreId || g.toLowerCase().replace(/\s+/g, "-");
+    nav({ to: "/genre/$genreId", params: { genreId: id } });
+  };
 
   return (
     <div className="min-h-screen pb-16">
@@ -198,14 +202,14 @@ function Home() {
 
             {trending.length > 0 && (
               <section>
-                <SectionTitle title="Trending" />
+                <SectionTitle title="Trending" onViewMore={() => nav({ to: "/trending" })} />
                 <TrendingRow items={trending} onClick={watchAnime} />
               </section>
             )}
 
             {recent.length > 0 && (
               <section>
-                <SectionTitle title="Episode Terbaru" />
+                <SectionTitle title="Episode Terbaru" onViewMore={() => nav({ to: "/trending" })} />
                 <LandscapeGrid items={recent.slice(0, 12)} onClick={watchAnime} />
               </section>
             )}
@@ -313,7 +317,7 @@ function Home() {
                   {genreList.map((g) => (
                     <button
                       key={g.genreId}
-                      onClick={() => nav({ to: "/search", search: { q: g.title } })}
+                      onClick={() => nav({ to: "/genre/$genreId", params: { genreId: g.genreId } })}
                       className="text-xs sm:text-sm px-4 py-2 rounded-full bg-secondary border border-border text-muted-foreground hover:text-primary hover:border-primary transition"
                     >
                       {g.title}

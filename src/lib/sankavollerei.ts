@@ -64,6 +64,14 @@ export async function svGenres(): Promise<{ title: string; genreId: string }[]> 
   const d = await get<any>(`/samehadaku/genres`);
   return (d?.genreList || []).map((g: any) => ({ title: g.title, genreId: g.genreId }));
 }
+export async function svGenre(genreId: string, page = 1): Promise<SvAnime[]> {
+  const d = await get<any>(`/samehadaku/genres/${genreId}?page=${page}`);
+  return norm(d?.animeList || []);
+}
+export async function svSearch(q: string, page = 1): Promise<SvAnime[]> {
+  const d = await get<any>(`/samehadaku/search?q=${encodeURIComponent(q)}&page=${page}`);
+  return norm(d?.animeList || []);
+}
 
 export type SvEpisode = { title: string; episodeId: string; href?: string };
 export type SvServer = { title: string; serverId: string };

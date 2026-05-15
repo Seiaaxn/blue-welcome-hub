@@ -9,12 +9,21 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TrendingRouteImport } from './routes/trending'
 import { Route as SearchRouteImport } from './routes/search'
 import { Route as HomeRouteImport } from './routes/home'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as WatchEpisodeIdRouteImport } from './routes/watch.$episodeId'
+import { Route as UUidRouteImport } from './routes/u.$uid'
+import { Route as GenreGenreIdRouteImport } from './routes/genre.$genreId'
+import { Route as ChatPeerIdRouteImport } from './routes/chat.$peerId'
 import { Route as AnimeAnimeIdRouteImport } from './routes/anime.$animeId'
 
+const TrendingRoute = TrendingRouteImport.update({
+  id: '/trending',
+  path: '/trending',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SearchRoute = SearchRouteImport.update({
   id: '/search',
   path: '/search',
@@ -35,6 +44,21 @@ const WatchEpisodeIdRoute = WatchEpisodeIdRouteImport.update({
   path: '/watch/$episodeId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const UUidRoute = UUidRouteImport.update({
+  id: '/u/$uid',
+  path: '/u/$uid',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GenreGenreIdRoute = GenreGenreIdRouteImport.update({
+  id: '/genre/$genreId',
+  path: '/genre/$genreId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ChatPeerIdRoute = ChatPeerIdRouteImport.update({
+  id: '/chat/$peerId',
+  path: '/chat/$peerId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AnimeAnimeIdRoute = AnimeAnimeIdRouteImport.update({
   id: '/anime/$animeId',
   path: '/anime/$animeId',
@@ -45,14 +69,22 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/home': typeof HomeRoute
   '/search': typeof SearchRoute
+  '/trending': typeof TrendingRoute
   '/anime/$animeId': typeof AnimeAnimeIdRoute
+  '/chat/$peerId': typeof ChatPeerIdRoute
+  '/genre/$genreId': typeof GenreGenreIdRoute
+  '/u/$uid': typeof UUidRoute
   '/watch/$episodeId': typeof WatchEpisodeIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/home': typeof HomeRoute
   '/search': typeof SearchRoute
+  '/trending': typeof TrendingRoute
   '/anime/$animeId': typeof AnimeAnimeIdRoute
+  '/chat/$peerId': typeof ChatPeerIdRoute
+  '/genre/$genreId': typeof GenreGenreIdRoute
+  '/u/$uid': typeof UUidRoute
   '/watch/$episodeId': typeof WatchEpisodeIdRoute
 }
 export interface FileRoutesById {
@@ -60,20 +92,46 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/home': typeof HomeRoute
   '/search': typeof SearchRoute
+  '/trending': typeof TrendingRoute
   '/anime/$animeId': typeof AnimeAnimeIdRoute
+  '/chat/$peerId': typeof ChatPeerIdRoute
+  '/genre/$genreId': typeof GenreGenreIdRoute
+  '/u/$uid': typeof UUidRoute
   '/watch/$episodeId': typeof WatchEpisodeIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/home' | '/search' | '/anime/$animeId' | '/watch/$episodeId'
+  fullPaths:
+    | '/'
+    | '/home'
+    | '/search'
+    | '/trending'
+    | '/anime/$animeId'
+    | '/chat/$peerId'
+    | '/genre/$genreId'
+    | '/u/$uid'
+    | '/watch/$episodeId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/home' | '/search' | '/anime/$animeId' | '/watch/$episodeId'
+  to:
+    | '/'
+    | '/home'
+    | '/search'
+    | '/trending'
+    | '/anime/$animeId'
+    | '/chat/$peerId'
+    | '/genre/$genreId'
+    | '/u/$uid'
+    | '/watch/$episodeId'
   id:
     | '__root__'
     | '/'
     | '/home'
     | '/search'
+    | '/trending'
     | '/anime/$animeId'
+    | '/chat/$peerId'
+    | '/genre/$genreId'
+    | '/u/$uid'
     | '/watch/$episodeId'
   fileRoutesById: FileRoutesById
 }
@@ -81,12 +139,23 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   HomeRoute: typeof HomeRoute
   SearchRoute: typeof SearchRoute
+  TrendingRoute: typeof TrendingRoute
   AnimeAnimeIdRoute: typeof AnimeAnimeIdRoute
+  ChatPeerIdRoute: typeof ChatPeerIdRoute
+  GenreGenreIdRoute: typeof GenreGenreIdRoute
+  UUidRoute: typeof UUidRoute
   WatchEpisodeIdRoute: typeof WatchEpisodeIdRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/trending': {
+      id: '/trending'
+      path: '/trending'
+      fullPath: '/trending'
+      preLoaderRoute: typeof TrendingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/search': {
       id: '/search'
       path: '/search'
@@ -115,6 +184,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof WatchEpisodeIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/u/$uid': {
+      id: '/u/$uid'
+      path: '/u/$uid'
+      fullPath: '/u/$uid'
+      preLoaderRoute: typeof UUidRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/genre/$genreId': {
+      id: '/genre/$genreId'
+      path: '/genre/$genreId'
+      fullPath: '/genre/$genreId'
+      preLoaderRoute: typeof GenreGenreIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/chat/$peerId': {
+      id: '/chat/$peerId'
+      path: '/chat/$peerId'
+      fullPath: '/chat/$peerId'
+      preLoaderRoute: typeof ChatPeerIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/anime/$animeId': {
       id: '/anime/$animeId'
       path: '/anime/$animeId'
@@ -129,7 +219,11 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   HomeRoute: HomeRoute,
   SearchRoute: SearchRoute,
+  TrendingRoute: TrendingRoute,
   AnimeAnimeIdRoute: AnimeAnimeIdRoute,
+  ChatPeerIdRoute: ChatPeerIdRoute,
+  GenreGenreIdRoute: GenreGenreIdRoute,
+  UUidRoute: UUidRoute,
   WatchEpisodeIdRoute: WatchEpisodeIdRoute,
 }
 export const routeTree = rootRouteImport

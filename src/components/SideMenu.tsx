@@ -8,7 +8,18 @@ import { useState } from "react";
 import { useAuth } from "@/lib/useAuth";
 import { toast } from "sonner";
 
-const GENRES = ["Action", "Adventure", "Comedy", "Drama", "Fantasy", "Isekai", "Romance", "Sci-Fi", "Slice of Life", "Thriller"];
+const GENRES: { label: string; id: string }[] = [
+  { label: "Action", id: "action" },
+  { label: "Adventure", id: "adventure" },
+  { label: "Comedy", id: "comedy" },
+  { label: "Drama", id: "drama" },
+  { label: "Fantasy", id: "fantasy" },
+  { label: "Isekai", id: "isekai" },
+  { label: "Romance", id: "romance" },
+  { label: "Sci-Fi", id: "sci-fi" },
+  { label: "Slice of Life", id: "slice-of-life" },
+  { label: "Thriller", id: "thriller" },
+];
 
 export function SideMenu({
   trigger,
@@ -101,11 +112,11 @@ export function SideMenu({
           <div className="grid grid-cols-2 gap-2">
             {GENRES.map((g) => (
               <button
-                key={g}
-                onClick={handle(() => onGenre?.(g))}
+                key={g.id}
+                onClick={handle(() => onGenre?.(g.id))}
                 className="h-10 rounded-xl border border-border bg-card text-sm font-bold hover:border-primary hover:text-primary"
               >
-                {g}
+                {g.label}
               </button>
             ))}
           </div>
@@ -131,6 +142,13 @@ export function SideMenu({
                 <SearchIcon className="h-5 w-5 text-muted-foreground" /> Cari Anime
               </Link>
             </li>
+            {user && (
+              <li>
+                <Link to="/u/$uid" params={{ uid: user.uid }} onClick={close} className="flex items-center gap-3 h-11 px-3 rounded-xl hover:bg-secondary">
+                  <LogIn className="h-5 w-5 text-muted-foreground" /> Profil Saya
+                </Link>
+              </li>
+            )}
             <li>
               <Link to="/" onClick={close} className="flex items-center gap-3 h-11 px-3 rounded-xl hover:bg-secondary">
                 <Tv className="h-5 w-5 text-muted-foreground" /> Welcome

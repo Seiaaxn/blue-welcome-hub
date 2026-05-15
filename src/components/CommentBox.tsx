@@ -9,17 +9,20 @@ import {
   set,
   remove,
 } from "firebase/database";
-import { Heart, MessageCircle } from "lucide-react";
+import { Heart, MessageCircle, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { db } from "@/lib/firebase";
 import { useAuth } from "@/lib/useAuth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { RoleBadge } from "@/components/Badges";
+import { isAdmin } from "@/lib/roles";
 
 type Reply = {
   id: string;
   uid: string;
   name: string;
+  email?: string | null;
   photo?: string | null;
   text: string;
   ts: number;
@@ -29,6 +32,7 @@ type Comment = {
   id: string;
   uid: string;
   name: string;
+  email?: string | null;
   photo?: string | null;
   text: string;
   ts: number;
@@ -36,15 +40,24 @@ type Comment = {
   replies?: Record<string, Omit<Reply, "id">>;
 };
 
-export function CommentBox() {
+export function CommentBox({
+  scope = "global",
+  title = "Komentar",
+}: {
+  scope?: string;
+  title?: string;
+} = {}) {
   const { user, signInGoogle, logout } = useAuth();
+  const path = `comments/${scope}`;
   const [comments, setComments] = useState<Comment[]>([]);
   const [text, setText] = useState("");
   const [openReply, setOpenReply] = useState<string | null>(null);
   const [replyText, setReplyText] = useState("");
 
+  const viewerIsAdmin = isAdmin(user?.email);
+
   useEffect(() => {
-    const q = query(ref(db, "comments"), limitToLast(50));
+    const q = query(ref(db, path), limitToLast(50));
     const unsub = onValue(q, (snap) => {
       const list: Comment[] = [];
       snap.forEach((c) => {
@@ -53,14 +66,19 @@ export function CommentBox() {
       setComments(list.reverse());
     });
     return () => unsub();
-  }, []);
+  }, [path]);
 
   const send = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user || !text.trim()) return;
-    await push(ref(db, "comments"), {
+    if (!user) {
+      toast.error("Login dulu untuk berkomentar.");
+      return signInGoogle();
+    }
+    if (!text.trim()) return;
+    await push(ref(db, path), {
       uid: user.uid,
       name: user.displayName ?? "Anon",
+      email: user.email ?? null,
       photo: user.photoURL ?? null,
       text: text.trim().slice(0, 500),
       ts: serverTimestamp(),
@@ -70,11 +88,11 @@ export function CommentBox() {
 
   const toggleLike = async (c: Comment) => {
     if (!user) {
-      toast.error("Silakan login terlebih dahulu untuk menyukai komentar.");
+      toast.error("Login dulu untuk menyukai komentar.");
       return signInGoogle();
     }
     const liked = c.likes?.[user.uid];
-    const likeRef = ref(db, `comments/${c.id}/likes/${user.uid}`);
+    const likeRef = ref(db, `${path}/${c.id}/likes/${user.uid}`);
     if (liked) await remove(likeRef);
     else await set(likeRef, true);
   };
@@ -82,9 +100,10 @@ export function CommentBox() {
   const sendReply = async (e: React.FormEvent, commentId: string) => {
     e.preventDefault();
     if (!user || !replyText.trim()) return;
-    await push(ref(db, `comments/${commentId}/replies`), {
+    await push(ref(db, `${path}/${commentId}/replies`), {
       uid: user.uid,
       name: user.displayName ?? "Anon",
+      email: user.email ?? null,
       photo: user.photoURL ?? null,
       text: replyText.trim().slice(0, 500),
       ts: serverTimestamp(),
@@ -93,43 +112,50 @@ export function CommentBox() {
     setOpenReply(null);
   };
 
+  const deleteComment = async (c: Comment) => {
+    if (!user) return;
+    if (!viewerIsAdmin && c.uid !== user.uid) return;
+    if (!confirm("Hapus komentar ini?")) return;
+    await remove(ref(db, `${path}/${c.id}`));
+    toast.success("Komentar dihapus.");
+  };
+
   return (
     <section className="mt-10 rounded-2xl border border-border bg-card/60 p-5 backdrop-blur">
-      <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-lg font-bold text-primary">Komentar</h2>
+      <div className="mb-4 flex items-center justify-between gap-2">
+        <h2 className="text-lg font-bold text-primary">{title}</h2>
         {user ? (
           <div className="flex items-center gap-2 text-sm">
             {user.photoURL && (
               <img src={user.photoURL} alt="" className="h-7 w-7 rounded-full" />
             )}
-            <span className="text-muted-foreground">{user.displayName}</span>
+            <span className="text-muted-foreground hidden sm:inline">{user.displayName}</span>
+            <RoleBadge email={user.email} />
             <Button size="sm" variant="ghost" onClick={() => logout()}>
               Keluar
             </Button>
           </div>
         ) : (
           <Button size="sm" onClick={() => signInGoogle()}>
-            Masuk Dengan Google
+            Masuk dengan Google
           </Button>
         )}
       </div>
 
-      {user && (
-        <form onSubmit={send} className="mb-4 flex gap-2">
-          <Input
-            value={text}
-            onChange={(e) => setText(e.target.value)}
-            placeholder="Tulis komentar..."
-            maxLength={500}
-          />
-          <Button type="submit">Kirim</Button>
-        </form>
-      )}
+      <form onSubmit={send} className="mb-4 flex gap-2">
+        <Input
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+          placeholder={user ? "Tulis komentar..." : "Login dulu untuk berkomentar..."}
+          maxLength={500}
+        />
+        <Button type="submit">Kirim</Button>
+      </form>
 
       <ul className="space-y-3">
         {comments.length === 0 && (
           <li className="text-sm text-muted-foreground">
-            Belum Ada Komentar. Jadilah Orang Yang Pertama!
+            Belum ada komentar. Jadilah yang pertama!
           </li>
         )}
         {comments.map((c) => {
@@ -140,6 +166,7 @@ export function CommentBox() {
                 .map(([id, r]) => ({ id, ...r }))
                 .sort((a, b) => (a.ts ?? 0) - (b.ts ?? 0))
             : [];
+          const canDelete = !!user && (viewerIsAdmin || c.uid === user.uid);
 
           return (
             <li key={c.id} className="rounded-lg bg-background/60 p-3">
@@ -149,9 +176,21 @@ export function CommentBox() {
                 ) : (
                   <div className="h-8 w-8 shrink-0 rounded-full bg-primary/30" />
                 )}
-                <div className="flex-1">
-                  <div className="text-sm font-semibold text-foreground">{c.name}</div>
-                  <div className="text-sm text-muted-foreground">{c.text}</div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="text-sm font-semibold text-foreground">{c.name}</span>
+                    <RoleBadge email={c.email} />
+                    {canDelete && (
+                      <button
+                        onClick={() => deleteComment(c)}
+                        className="ml-auto text-muted-foreground hover:text-destructive"
+                        aria-label="Hapus"
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </button>
+                    )}
+                  </div>
+                  <div className="text-sm text-muted-foreground break-words">{c.text}</div>
 
                   <div className="mt-2 flex items-center gap-3 text-xs">
                     <button
@@ -166,7 +205,7 @@ export function CommentBox() {
                     <button
                       onClick={() => {
                         if (!user) {
-                          toast.error("Login dulu untuk membalas komentar.");
+                          toast.error("Login dulu untuk membalas.");
                           return signInGoogle();
                         }
                         setOpenReply(openReply === c.id ? null : c.id);
@@ -202,9 +241,11 @@ export function CommentBox() {
                           ) : (
                             <div className="h-6 w-6 shrink-0 rounded-full bg-primary/30" />
                           )}
-                          <div>
-                            <div className="text-xs font-semibold">{r.name}</div>
-                            <div className="text-xs text-muted-foreground">{r.text}</div>
+                          <div className="min-w-0">
+                            <div className="text-xs font-semibold flex items-center gap-1.5">
+                              {r.name} <RoleBadge email={r.email} />
+                            </div>
+                            <div className="text-xs text-muted-foreground break-words">{r.text}</div>
                           </div>
                         </li>
                       ))}

@@ -1,11 +1,13 @@
-import { createFileRoute, useNavigate, useRouter } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, useRouter, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { zodValidator, fallback } from "@tanstack/zod-adapter";
 import { z } from "zod";
 import { useState } from "react";
-import { ArrowLeft, Search, Star } from "lucide-react";
+import { ArrowLeft, Search, Star, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { svSearch } from "@/lib/sankavollerei";
+import { cleanTitle } from "@/lib/title";
 
 const searchSchema = z.object({
   q: fallback(z.string(), "").default(""),
@@ -22,17 +24,6 @@ export const Route = createFileRoute("/search")({
   component: SearchPage,
 });
 
-type Anime = {
-  mal_id: number;
-  title: string;
-  images: { jpg: { image_url: string; large_image_url?: string } };
-  score?: number | null;
-  episodes?: number | null;
-  type?: string | null;
-  year?: number | null;
-  synopsis?: string | null;
-};
-
 function SearchPage() {
   const { q } = Route.useSearch();
   const navigate = useNavigate({ from: "/search" });
@@ -40,17 +31,10 @@ function SearchPage() {
   const [draft, setDraft] = useState(q);
 
   const { data, isLoading, isError } = useQuery({
-    queryKey: ["jikan-search", q],
+    queryKey: ["sv-search", q],
     enabled: q.trim().length > 0,
     staleTime: 5 * 60 * 1000,
-    queryFn: async (): Promise<Anime[]> => {
-      const r = await fetch(
-        `https://api.jikan.moe/v4/anime?q=${encodeURIComponent(q)}&limit=20&sfw=true`,
-      );
-      if (!r.ok) throw new Error("Gagal memuat");
-      const j = await r.json();
-      return j.data ?? [];
-    },
+    queryFn: () => svSearch(q),
   });
 
   const submit = (e: React.FormEvent) => {
@@ -68,9 +52,9 @@ function SearchPage() {
         >
           <ArrowLeft className="h-5 w-5" />
         </button>
-        <span className="text-lg font-extrabold tracking-wider">
+        <Link to="/" className="text-lg font-extrabold tracking-wider">
           NEX<span className="text-primary">Z</span>HU
-        </span>
+        </Link>
       </header>
 
       <form onSubmit={submit} className="flex items-center gap-3">
@@ -88,15 +72,12 @@ function SearchPage() {
 
       <section className="mt-6">
         {q.trim() === "" && (
-          <p className="text-sm text-muted-foreground">
-            Ketik Judul Anime Untuk Mencari 
-          </p>
+          <p className="text-sm text-muted-foreground">Ketik judul anime untuk mencari.</p>
         )}
 
         {q.trim() !== "" && (
           <h1 className="mb-4 text-lg font-bold">
-            Hasil Untuk:{" "}
-            <span className="text-primary">"{q}"</span>
+            Hasil untuk: <span className="text-primary">"{q}"</span>
           </h1>
         )}
 
@@ -110,51 +91,61 @@ function SearchPage() {
 
         {isError && (
           <p className="text-sm text-destructive">
-            Gagal Memuat Hasil. Coba Lagi Sebentar — API Sedang Membatasi Permintaan.
+            Gagal memuat hasil. Coba lagi sebentar.
           </p>
         )}
 
         {data && data.length === 0 && (
-          <p className="text-sm text-muted-foreground">Tidak Ada Hasil Ditemukan.</p>
+          <p className="text-sm text-muted-foreground">Tidak ada hasil ditemukan.</p>
         )}
 
         {data && data.length > 0 && (
           <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3">
             {data.map((a) => (
-              <li
-                key={a.mal_id}
-                className="group overflow-hidden rounded-xl border border-border bg-card/60 backdrop-blur transition hover:border-primary/60"
-              >
-                <div className="aspect-[2/3] w-full overflow-hidden bg-muted">
-                  <img
-                    src={a.images.jpg.image_url}
-                    alt={a.title}
-                    loading="lazy"
-                    className="h-full w-full object-cover transition group-hover:scale-105"
-                  />
-                </div>
-                <div className="p-3">
-                  <h3 className="line-clamp-2 text-sm font-semibold">{a.title}</h3>
-                  <div className="mt-1 flex items-center gap-2 text-xs text-muted-foreground">
-                    {a.score != null && (
-                      <span className="flex items-center gap-1 text-primary">
-                        <Star className="h-3 w-3 fill-primary" /> {a.score}
-                      </span>
+              <li key={a.animeId}>
+                <Link
+                  to="/anime/$animeId"
+                  params={{ animeId: a.animeId }}
+                  className="group block overflow-hidden rounded-xl border border-border bg-card/60 backdrop-blur transition hover:border-primary/60"
+                >
+                  <div className="relative aspect-[2/3] w-full overflow-hidden bg-muted">
+                    {a.poster ? (
+                      <img
+                        src={a.poster}
+                        alt={a.title}
+                        loading="lazy"
+                        className="h-full w-full object-cover transition group-hover:scale-105"
+                      />
+                    ) : (
+                      <div className="grid h-full w-full place-items-center text-xs text-muted-foreground">No Image</div>
                     )}
-                    {a.type && <span>{a.type}</span>}
-                    {a.episodes != null && <span>· {a.episodes} eps</span>}
+                    <div className="absolute inset-0 grid place-items-center bg-black/40 opacity-0 transition group-hover:opacity-100">
+                      <span className="grid h-12 w-12 place-items-center rounded-full bg-primary/90 glow-primary">
+                        <Play className="h-6 w-6 text-primary-foreground fill-current" />
+                      </span>
+                    </div>
                   </div>
-                </div>
+                  <div className="p-3">
+                    <h3 className="line-clamp-2 text-sm font-semibold group-hover:text-primary">{cleanTitle(a.title)}</h3>
+                    <div className="mt-1 flex items-center gap-2 text-xs text-muted-foreground">
+                      {a.score && (
+                        <span className="flex items-center gap-1 text-primary">
+                          <Star className="h-3 w-3 fill-primary" /> {a.score}
+                        </span>
+                      )}
+                      {a.type && <span>{a.type}</span>}
+                      {a.status && <span>· {a.status}</span>}
+                    </div>
+                  </div>
+                </Link>
               </li>
             ))}
           </ul>
         )}
       </section>
 
-      
-
       <footer className="mt-10 pb-10 text-center text-xs text-muted-foreground">
-        Data Anime via Api
+        Data Anime via Samehadaku
       </footer>
     </main>
   );
