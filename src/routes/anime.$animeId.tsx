@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { ArrowLeft, Play, Star, Calendar, Tv, Loader2 } from "lucide-react";
 import { svDetail } from "@/lib/sankavollerei";
+import { cleanTitle } from "@/lib/title";
 
 export const Route = createFileRoute("/anime/$animeId")({
   component: AnimeDetail,
@@ -77,13 +78,19 @@ function AnimeDetail() {
         {data && (
           <>
             <div className="flex flex-col sm:flex-row gap-5">
-              <img
-                src={data.poster}
-                alt={data.title}
-                className="w-40 sm:w-52 aspect-[3/4] rounded-xl object-cover border border-border self-center sm:self-start"
-              />
+              {data.poster ? (
+                <img
+                  src={data.poster}
+                  alt={cleanTitle(data.title)}
+                  className="w-40 sm:w-52 aspect-[3/4] rounded-xl object-cover border border-border self-center sm:self-start"
+                />
+              ) : (
+                <div className="w-40 sm:w-52 aspect-[3/4] rounded-xl bg-secondary border border-border self-center sm:self-start grid place-items-center text-xs text-muted-foreground">
+                  No Image
+                </div>
+              )}
               <div className="flex-1 min-w-0">
-                <h1 className="text-2xl sm:text-3xl font-black">{data.title}</h1>
+                <h1 className="text-2xl sm:text-3xl font-black">{cleanTitle(data.title)}</h1>
                 <div className="mt-3 flex flex-wrap gap-2 text-xs">
                   {data.score && (
                     <span className="inline-flex items-center gap-1 rounded-full bg-primary/15 text-primary px-3 py-1 font-bold">

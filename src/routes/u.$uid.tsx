@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useAuth } from "@/lib/useAuth";
 import { useProfile, useFollowing, useFollowers, follow, unfollow, isMutual, upsertProfile } from "@/lib/social";
+import { ensureKeypair } from "@/lib/crypto";
 import { RoleBadge } from "@/components/Badges";
 
 export const Route = createFileRoute("/u/$uid")({
@@ -21,16 +22,19 @@ function ProfilePage() {
   const myFollowing = useFollowing(user?.uid);
   const [busy, setBusy] = useState(false);
 
-  // Self profile sync to DB so others can find them
+  // Self profile sync + ensure E2E keypair is published.
   useEffect(() => {
-    if (user) {
-      upsertProfile({
+    if (!user) return;
+    (async () => {
+      const publicKey = await ensureKeypair(user.uid).catch(() => null);
+      await upsertProfile({
         uid: user.uid,
         displayName: user.displayName,
         email: user.email,
         photoURL: user.photoURL,
+        publicKey: publicKey ?? undefined,
       }).catch(() => {});
-    }
+    })();
   }, [user]);
 
   const isMe = user?.uid === uid;

@@ -209,7 +209,7 @@ function Home() {
 
             {recent.length > 0 && (
               <section>
-                <SectionTitle title="Episode Terbaru" onViewMore={() => nav({ to: "/trending" })} />
+                <SectionTitle title="Episode Terbaru" onViewMore={() => nav({ to: "/list/$listId", params: { listId: "latest" } })} />
                 <LandscapeGrid items={recent.slice(0, 12)} onClick={watchAnime} />
               </section>
             )}
@@ -243,13 +243,13 @@ function Home() {
 
             <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
               {[
-                { title: "Sedang Tayang", items: ongoing.slice(0, 6) },
-                { title: "Most Popular", items: popular.slice(0, 6) },
-                { title: "Selesai", items: completed.slice(0, 6) },
-                { title: "Movies", items: movies.slice(0, 6) },
+                { title: "Sedang Tayang", items: ongoing.slice(0, 6), listId: "ongoing" },
+                { title: "Most Popular", items: popular.slice(0, 6), listId: "popular" },
+                { title: "Selesai", items: completed.slice(0, 6), listId: "completed" },
+                { title: "Movies", items: movies.slice(0, 6), listId: "movies" },
               ].filter((b) => b.items.length > 0).map((b) => (
                 <div key={b.title} className="bg-card rounded-2xl border border-border p-4">
-                  <SectionTitle title={b.title} />
+                  <SectionTitle title={b.title} onViewMore={() => nav({ to: "/list/$listId", params: { listId: b.listId } })} />
                   <RowList items={b.items} onClick={watchAnime} />
                 </div>
               ))}
@@ -257,14 +257,14 @@ function Home() {
 
             {popular.length > 0 && (
               <section id="section-popular" className="scroll-mt-20">
-                <SectionTitle title="Populer" />
+                <SectionTitle title="Populer" onViewMore={() => nav({ to: "/list/$listId", params: { listId: "popular" } })} />
                 <PortraitGrid items={popular.slice(0, 12)} onClick={watchAnime} />
               </section>
             )}
 
             {movies.length > 0 && (
               <section id="section-movies" className="scroll-mt-20">
-                <SectionTitle title="Movies" />
+                <SectionTitle title="Movies" onViewMore={() => nav({ to: "/list/$listId", params: { listId: "movies" } })} />
                 <PortraitGrid items={movies.slice(0, 12)} onClick={watchAnime} />
               </section>
             )}
@@ -330,10 +330,14 @@ function Home() {
         )}
 
         <footer className="pt-6 border-t border-border text-center text-xs text-muted-foreground space-y-2">
-          <div className="flex items-center justify-center gap-4">
+          <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
             <Link to="/" className="hover:text-primary">Home</Link>
             <span>·</span>
             <Link to="/search" search={{ q: "" }} className="hover:text-primary">Cari</Link>
+            <span>·</span>
+            <Link to="/dmca" className="hover:text-primary">DMCA</Link>
+            <span>·</span>
+            <Link to="/tos" className="hover:text-primary">Terms</Link>
             <span>·</span>
             <a href="https://discord.com/" target="_blank" rel="noreferrer" className="hover:text-primary">Discord</a>
           </div>

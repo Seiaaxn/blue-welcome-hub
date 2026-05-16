@@ -94,16 +94,6 @@ function Welcome() {
             height={768}
             className="h-auto w-full object-cover float-anim"
           />
-          {/* Floating animated badges (gif-like) */}
-          <span className="pointer-events-none absolute left-3 top-3 inline-flex h-8 items-center gap-1 rounded-full bg-primary/90 px-3 text-[11px] font-black text-primary-foreground shadow-lg pulse-anim">
-            ● LIVE
-          </span>
-          <span className="pointer-events-none absolute right-3 top-3 inline-flex h-8 items-center gap-1 rounded-full bg-background/80 px-3 text-[11px] font-black text-primary backdrop-blur spin-slow">
-            ★ HD
-          </span>
-          <span className="pointer-events-none absolute bottom-3 left-1/2 -translate-x-1/2 rounded-full bg-background/70 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-foreground/90 backdrop-blur bounce-anim">
-            New Episodes Daily
-          </span>
         </div>
 
         <h1 className="mt-6 text-center text-4xl font-extrabold tracking-wider">
@@ -203,8 +193,13 @@ function Welcome() {
         </Accordion>
       </section>
 
-      <footer className="mt-10 pb-10 text-center text-xs text-muted-foreground">
-        © {new Date().getFullYear()} NEXZHU
+      <footer className="mt-10 pb-10 text-center text-xs text-muted-foreground space-y-2">
+        <div className="flex items-center justify-center gap-3">
+          <Link to="/dmca" className="hover:text-primary">DMCA</Link>
+          <span>·</span>
+          <Link to="/tos" className="hover:text-primary">Terms of Service</Link>
+        </div>
+        <p>© {new Date().getFullYear()} NEXZHU</p>
       </footer>
     </main>
   );

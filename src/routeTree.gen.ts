@@ -10,11 +10,14 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TrendingRouteImport } from './routes/trending'
+import { Route as TosRouteImport } from './routes/tos'
 import { Route as SearchRouteImport } from './routes/search'
 import { Route as HomeRouteImport } from './routes/home'
+import { Route as DmcaRouteImport } from './routes/dmca'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as WatchEpisodeIdRouteImport } from './routes/watch.$episodeId'
 import { Route as UUidRouteImport } from './routes/u.$uid'
+import { Route as ListListIdRouteImport } from './routes/list.$listId'
 import { Route as GenreGenreIdRouteImport } from './routes/genre.$genreId'
 import { Route as ChatPeerIdRouteImport } from './routes/chat.$peerId'
 import { Route as AnimeAnimeIdRouteImport } from './routes/anime.$animeId'
@@ -22,6 +25,11 @@ import { Route as AnimeAnimeIdRouteImport } from './routes/anime.$animeId'
 const TrendingRoute = TrendingRouteImport.update({
   id: '/trending',
   path: '/trending',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TosRoute = TosRouteImport.update({
+  id: '/tos',
+  path: '/tos',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SearchRoute = SearchRouteImport.update({
@@ -32,6 +40,11 @@ const SearchRoute = SearchRouteImport.update({
 const HomeRoute = HomeRouteImport.update({
   id: '/home',
   path: '/home',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DmcaRoute = DmcaRouteImport.update({
+  id: '/dmca',
+  path: '/dmca',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -47,6 +60,11 @@ const WatchEpisodeIdRoute = WatchEpisodeIdRouteImport.update({
 const UUidRoute = UUidRouteImport.update({
   id: '/u/$uid',
   path: '/u/$uid',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ListListIdRoute = ListListIdRouteImport.update({
+  id: '/list/$listId',
+  path: '/list/$listId',
   getParentRoute: () => rootRouteImport,
 } as any)
 const GenreGenreIdRoute = GenreGenreIdRouteImport.update({
@@ -67,35 +85,44 @@ const AnimeAnimeIdRoute = AnimeAnimeIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/dmca': typeof DmcaRoute
   '/home': typeof HomeRoute
   '/search': typeof SearchRoute
+  '/tos': typeof TosRoute
   '/trending': typeof TrendingRoute
   '/anime/$animeId': typeof AnimeAnimeIdRoute
   '/chat/$peerId': typeof ChatPeerIdRoute
   '/genre/$genreId': typeof GenreGenreIdRoute
+  '/list/$listId': typeof ListListIdRoute
   '/u/$uid': typeof UUidRoute
   '/watch/$episodeId': typeof WatchEpisodeIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/dmca': typeof DmcaRoute
   '/home': typeof HomeRoute
   '/search': typeof SearchRoute
+  '/tos': typeof TosRoute
   '/trending': typeof TrendingRoute
   '/anime/$animeId': typeof AnimeAnimeIdRoute
   '/chat/$peerId': typeof ChatPeerIdRoute
   '/genre/$genreId': typeof GenreGenreIdRoute
+  '/list/$listId': typeof ListListIdRoute
   '/u/$uid': typeof UUidRoute
   '/watch/$episodeId': typeof WatchEpisodeIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/dmca': typeof DmcaRoute
   '/home': typeof HomeRoute
   '/search': typeof SearchRoute
+  '/tos': typeof TosRoute
   '/trending': typeof TrendingRoute
   '/anime/$animeId': typeof AnimeAnimeIdRoute
   '/chat/$peerId': typeof ChatPeerIdRoute
   '/genre/$genreId': typeof GenreGenreIdRoute
+  '/list/$listId': typeof ListListIdRoute
   '/u/$uid': typeof UUidRoute
   '/watch/$episodeId': typeof WatchEpisodeIdRoute
 }
@@ -103,46 +130,58 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/dmca'
     | '/home'
     | '/search'
+    | '/tos'
     | '/trending'
     | '/anime/$animeId'
     | '/chat/$peerId'
     | '/genre/$genreId'
+    | '/list/$listId'
     | '/u/$uid'
     | '/watch/$episodeId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/dmca'
     | '/home'
     | '/search'
+    | '/tos'
     | '/trending'
     | '/anime/$animeId'
     | '/chat/$peerId'
     | '/genre/$genreId'
+    | '/list/$listId'
     | '/u/$uid'
     | '/watch/$episodeId'
   id:
     | '__root__'
     | '/'
+    | '/dmca'
     | '/home'
     | '/search'
+    | '/tos'
     | '/trending'
     | '/anime/$animeId'
     | '/chat/$peerId'
     | '/genre/$genreId'
+    | '/list/$listId'
     | '/u/$uid'
     | '/watch/$episodeId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  DmcaRoute: typeof DmcaRoute
   HomeRoute: typeof HomeRoute
   SearchRoute: typeof SearchRoute
+  TosRoute: typeof TosRoute
   TrendingRoute: typeof TrendingRoute
   AnimeAnimeIdRoute: typeof AnimeAnimeIdRoute
   ChatPeerIdRoute: typeof ChatPeerIdRoute
   GenreGenreIdRoute: typeof GenreGenreIdRoute
+  ListListIdRoute: typeof ListListIdRoute
   UUidRoute: typeof UUidRoute
   WatchEpisodeIdRoute: typeof WatchEpisodeIdRoute
 }
@@ -154,6 +193,13 @@ declare module '@tanstack/react-router' {
       path: '/trending'
       fullPath: '/trending'
       preLoaderRoute: typeof TrendingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tos': {
+      id: '/tos'
+      path: '/tos'
+      fullPath: '/tos'
+      preLoaderRoute: typeof TosRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/search': {
@@ -168,6 +214,13 @@ declare module '@tanstack/react-router' {
       path: '/home'
       fullPath: '/home'
       preLoaderRoute: typeof HomeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dmca': {
+      id: '/dmca'
+      path: '/dmca'
+      fullPath: '/dmca'
+      preLoaderRoute: typeof DmcaRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -189,6 +242,13 @@ declare module '@tanstack/react-router' {
       path: '/u/$uid'
       fullPath: '/u/$uid'
       preLoaderRoute: typeof UUidRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/list/$listId': {
+      id: '/list/$listId'
+      path: '/list/$listId'
+      fullPath: '/list/$listId'
+      preLoaderRoute: typeof ListListIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/genre/$genreId': {
@@ -217,12 +277,15 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  DmcaRoute: DmcaRoute,
   HomeRoute: HomeRoute,
   SearchRoute: SearchRoute,
+  TosRoute: TosRoute,
   TrendingRoute: TrendingRoute,
   AnimeAnimeIdRoute: AnimeAnimeIdRoute,
   ChatPeerIdRoute: ChatPeerIdRoute,
   GenreGenreIdRoute: GenreGenreIdRoute,
+  ListListIdRoute: ListListIdRoute,
   UUidRoute: UUidRoute,
   WatchEpisodeIdRoute: WatchEpisodeIdRoute,
 }
