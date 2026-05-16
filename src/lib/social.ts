@@ -1,9 +1,9 @@
 // Followers / following helpers backed by Firebase Realtime DB.
-import { ref, set, remove, onValue, get, push, serverTimestamp, query, limitToLast } from "firebase/database";
+import { ref, set, remove, onValue, get, push, serverTimestamp, query, limitToLast, update } from "firebase/database";
 import { db } from "@/lib/firebase";
 import { useEffect, useState } from "react";
 
-// Profiles: users/{uid} = { displayName, email, photoURL, updatedAt }
+// Profiles: users/{uid} = { displayName, email, photoURL, publicKey, updatedAt }
 // Following: follows/{uid}/{targetUid} = true
 // Followers: followers/{uid}/{followerUid} = true
 
@@ -12,15 +12,25 @@ export type PublicProfile = {
   displayName?: string | null;
   email?: string | null;
   photoURL?: string | null;
+  publicKey?: JsonWebKey | null;
 };
 
 export async function upsertProfile(p: PublicProfile) {
-  await set(ref(db, `users/${p.uid}`), {
+  // Use update so we don't wipe an existing publicKey when we only refresh
+  // basic identity fields.
+  const patch: Record<string, unknown> = {
     displayName: p.displayName ?? null,
     email: p.email ?? null,
     photoURL: p.photoURL ?? null,
     updatedAt: serverTimestamp(),
-  });
+  };
+  if (p.publicKey !== undefined) patch.publicKey = p.publicKey;
+  await update(ref(db, `users/${p.uid}`), patch);
+}
+
+export async function getPublicKey(uid: string): Promise<JsonWebKey | null> {
+  const s = await get(ref(db, `users/${uid}/publicKey`));
+  return s.exists() ? (s.val() as JsonWebKey) : null;
 }
 
 export async function follow(myUid: string, targetUid: string) {
@@ -94,7 +104,11 @@ export type ChatMessage = {
   id: string;
   uid: string;
   name: string;
-  text: string;
+  /** Plaintext (legacy/unencrypted messages only). */
+  text?: string;
+  /** Encrypted payload: base64 IV + base64 ciphertext. */
+  iv?: string;
+  ct?: string;
   ts: number;
 };
 
