@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate, useRouter, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
-import { ArrowLeft, Play, Star, Calendar, Tv, Loader2 } from "lucide-react";
+import { ArrowLeft, Play, Star, Calendar, Tv, Loader2, Clock } from "lucide-react";
 import { svDetail } from "@/lib/sankavollerei";
 import { cleanTitle } from "@/lib/title";
 
@@ -160,18 +160,43 @@ function AnimeDetail() {
                   <span className="h-5 w-1.5 rounded-full bg-primary" />
                   Daftar Episode ({sortedEpisodes.length})
                 </h2>
-                <ul className="grid grid-cols-3 sm:grid-cols-5 md:grid-cols-8 gap-2">
-                  {sortedEpisodes.map((e) => (
-                    <li key={e.episodeId}>
-                      <Link
-                        to="/watch/$episodeId"
-                        params={{ episodeId: e.episodeId }}
-                        className="block text-center text-sm font-bold py-2 rounded-lg bg-secondary border border-border hover:bg-primary hover:text-primary-foreground hover:border-primary transition"
-                      >
-                        {e.title}
-                      </Link>
-                    </li>
-                  ))}
+                <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                  {sortedEpisodes.map((e) => {
+                    const n = epNum(e.title);
+                    return (
+                      <li key={e.episodeId}>
+                        <Link
+                          to="/watch/$episodeId"
+                          params={{ episodeId: e.episodeId }}
+                          className="group flex items-center gap-3 p-2 rounded-lg bg-secondary/60 border border-border hover:border-primary hover:bg-secondary transition"
+                        >
+                          <div className="relative h-16 w-24 shrink-0 rounded-md overflow-hidden bg-background">
+                            {data.poster ? (
+                              <img src={data.poster} alt="" className="w-full h-full object-cover" />
+                            ) : null}
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                            <span className="absolute inset-0 grid place-items-center opacity-0 group-hover:opacity-100 transition">
+                              <Play className="h-6 w-6 text-primary fill-current" />
+                            </span>
+                            <span className="absolute left-1 top-1 px-1.5 py-0.5 rounded bg-primary text-primary-foreground text-[10px] font-black">
+                              EP {n || e.title}
+                            </span>
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-bold line-clamp-1 group-hover:text-primary transition">
+                              Episode {n || e.title}
+                            </p>
+                            <p className="text-[11px] text-muted-foreground mt-0.5 line-clamp-1">
+                              {cleanTitle(data.title)}
+                            </p>
+                            <p className="text-[10px] text-muted-foreground mt-1 flex items-center gap-1">
+                              <Clock className="h-3 w-3" /> {data.duration || "24 menit"}
+                            </p>
+                          </div>
+                        </Link>
+                      </li>
+                    );
+                  })}
                 </ul>
               </section>
             )}
