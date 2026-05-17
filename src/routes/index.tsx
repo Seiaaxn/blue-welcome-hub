@@ -30,24 +30,24 @@ const TOP_SEARCHES = [
 
 const FAQS = [
   {
-    q: "Apakah Nexzhu Menyebarkan Informasi Pribadi Pengguna?",
-    a: "Tidak. Kami Tidak Menjual Atau Membagikan Data Pribadimu Ke Pihak Ketiga. Kami Menggunakan Layanan Firebase Agar Lebih Aman.",
+    q: "Apakah data pribadi saya aman di Nexzhu?",
+    a: "Aman. Kami tidak pernah menjual atau membagikan data pribadimu ke pihak ketiga. Autentikasi ditangani oleh Firebase, dan pesan chat antar teman dienkripsi end-to-end di sisi perangkat.",
   },
   {
-    q: "Apakah Menonton Di Nexzhu Gratis?",
-    a: "Ya, Seluruh Koleksi Anime Di Nexzhu Bisa Kamu Tonton Secara Gratis. Kamu Bisa Mendukung Kami Melalui Tombol Support Us Atau Membeli Premium Ke Admin.",
+    q: "Apakah menonton anime di Nexzhu benar-benar gratis?",
+    a: "Ya, seluruh koleksi anime dapat ditonton secara gratis tanpa batas. Kamu bisa mendukung kami melalui tombol Support Us atau berlangganan Premium langsung ke admin.",
   },
   {
-    q: "Bagaimana Cara Request Anime Baru?",
-    a: "Mohon Maaf Kak, Kami Tidak Bisa Menerima Request Anime. Dikarenakan Kami Menggunakan Layanan Ketiga.",
+    q: "Bisakah saya request judul anime baru?",
+    a: "Maaf, kami belum bisa menerima request judul. Daftar anime mengikuti penyedia pihak ketiga yang kami gunakan sebagai sumber data.",
   },
   {
-    q: "Kenapa Video Kadang Lambat/Buffering?",
-    a: "Coba Ganti Server Pemutar Atau Turunkan Kualitas Video. Pastikan Koneksi Internetmu Stabil Minimal 5 Mbps Untuk Kualitas HD.",
+    q: "Kenapa video saya sering buffering atau lambat?",
+    a: "Coba pindah ke server pemutar lain atau turunkan kualitas video. Pastikan koneksi internet stabil di kecepatan minimal 5 Mbps untuk kualitas HD yang lancar.",
   },
   {
-    q: "Apakah Nexzhu Aman Dari Malware/Iklan Berbahaya?",
-    a: "Kami Berusaha Menjaga Situs Bersih. Jangan Klik Popup Mencurigakan Dan Gunakan Adblock Terpercaya Untuk Pengalaman Terbaik.",
+    q: "Apakah Nexzhu aman dari iklan berbahaya dan malware?",
+    a: "Kami berusaha menjaga situs tetap bersih dari iklan agresif. Hindari klik popup mencurigakan dan gunakan adblock terpercaya agar pengalaman menonton tetap nyaman.",
   },
 ];
 
@@ -73,7 +73,7 @@ function Welcome() {
 
   return (
     <main className="mx-auto max-w-2xl px-4 py-6">
-      <header className="flex items-center justify-between rounded-2xl border border-border bg-card/70 px-5 py-4 backdrop-blur">
+      <header className="flex items-center justify-between rounded-2xl border border-border bg-card/70 px-5 py-4">
         <Logo />
         <Link
           to="/search"
@@ -85,7 +85,7 @@ function Welcome() {
         </Link>
       </header>
 
-      <section className="mt-5 rounded-2xl border border-border bg-card/70 p-5 backdrop-blur">
+      <section className="mt-5 rounded-2xl border border-border bg-card/70 p-5">
         <div className="relative overflow-hidden rounded-xl">
           <img
             src={heroImg}
@@ -172,7 +172,7 @@ function Welcome() {
         </div>
       </section>
 
-      <section className="mt-5 rounded-2xl border border-border bg-card/70 px-5 py-4 backdrop-blur">
+      <section className="mt-5 rounded-2xl border border-border bg-card/70 px-5 py-4">
         <div className="mb-2 flex items-center gap-3">
           <span className="h-6 w-1.5 rounded-full bg-primary" />
           <h2 className="text-base font-bold tracking-wider text-foreground">

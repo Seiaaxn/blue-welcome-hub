@@ -54,7 +54,7 @@ export const PortraitCard = ({ a, onClick }: { a: AnimeCard; onClick: (a: AnimeC
         <div className="w-full h-full grid place-items-center text-muted-foreground text-xs">No Image</div>
       )}
       {a.rating && a.rating !== "HD" && (
-        <span className="absolute right-1.5 top-1.5 px-1.5 py-0.5 rounded bg-black/70 backdrop-blur text-[10px] font-bold text-primary flex items-center gap-0.5">
+        <span className="absolute right-1.5 top-1.5 px-1.5 py-0.5 rounded bg-black/70 text-[10px] font-bold text-primary flex items-center gap-0.5">
           <Star className="h-2.5 w-2.5 fill-current" />{a.rating}
         </span>
       )}

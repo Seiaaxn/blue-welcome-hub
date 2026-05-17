@@ -60,7 +60,7 @@ export const Spotlight = ({ items, onWatch }: { items: AnimeCard[]; onWatch: (a:
           </button>
           <button
             onClick={() => onWatch(a)}
-            className="h-11 sm:h-12 px-5 sm:px-6 rounded-full bg-card/80 backdrop-blur text-foreground font-extrabold text-xs sm:text-sm flex items-center gap-2 hover:bg-card transition border border-border"
+            className="h-11 sm:h-12 px-5 sm:px-6 rounded-full bg-card/80 text-foreground font-extrabold text-xs sm:text-sm flex items-center gap-2 hover:bg-card transition border border-border"
           >
             Detail <Info className="h-4 w-4" />
           </button>
@@ -68,10 +68,10 @@ export const Spotlight = ({ items, onWatch }: { items: AnimeCard[]; onWatch: (a:
       </div>
 
       <div className="absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 flex flex-col gap-2 z-10">
-        <button onClick={prev} aria-label="Prev" className="h-9 w-9 sm:h-10 sm:w-10 rounded-full bg-card/80 backdrop-blur border border-border grid place-items-center hover:text-primary hover:border-primary transition">
+        <button onClick={prev} aria-label="Prev" className="h-9 w-9 sm:h-10 sm:w-10 rounded-full bg-card/80 border border-border grid place-items-center hover:text-primary hover:border-primary transition">
           <ChevronLeft className="h-5 w-5" />
         </button>
-        <button onClick={next} aria-label="Next" className="h-9 w-9 sm:h-10 sm:w-10 rounded-full bg-card/80 backdrop-blur border border-border grid place-items-center hover:text-primary hover:border-primary transition">
+        <button onClick={next} aria-label="Next" className="h-9 w-9 sm:h-10 sm:w-10 rounded-full bg-card/80 border border-border grid place-items-center hover:text-primary hover:border-primary transition">
           <ChevronRight className="h-5 w-5" />
         </button>
       </div>
