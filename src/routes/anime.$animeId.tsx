@@ -160,7 +160,7 @@ function AnimeDetail() {
                   <span className="h-5 w-1.5 rounded-full bg-primary" />
                   Daftar Episode ({sortedEpisodes.length})
                 </h2>
-                <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                <ul className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
                   {sortedEpisodes.map((e) => {
                     const n = epNum(e.title);
                     return (
@@ -168,30 +168,36 @@ function AnimeDetail() {
                         <Link
                           to="/watch/$episodeId"
                           params={{ episodeId: e.episodeId }}
-                          className="group flex items-center gap-3 p-2 rounded-lg bg-secondary/60 border border-border hover:border-primary hover:bg-secondary transition"
+                          className="group block text-left relative w-full"
                         >
-                          <div className="relative h-16 w-24 shrink-0 rounded-md overflow-hidden bg-background">
+                          <div className="relative aspect-video rounded-xl overflow-hidden bg-secondary border border-border">
                             {data.poster ? (
-                              <img src={data.poster} alt="" className="w-full h-full object-cover" />
-                            ) : null}
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-                            <span className="absolute inset-0 grid place-items-center opacity-0 group-hover:opacity-100 transition">
-                              <Play className="h-6 w-6 text-primary fill-current" />
-                            </span>
-                            <span className="absolute left-1 top-1 px-1.5 py-0.5 rounded bg-primary text-primary-foreground text-[10px] font-black">
+                              <img
+                                src={data.poster}
+                                alt={cleanTitle(data.title)}
+                                loading="lazy"
+                                className="w-full h-full object-cover object-center group-hover:scale-105 transition duration-500"
+                              />
+                            ) : (
+                              <div className="w-full h-full grid place-items-center text-muted-foreground text-xs">No Image</div>
+                            )}
+                            <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/95 via-black/40 to-transparent pointer-events-none" />
+                            <span className="absolute left-2 top-2 px-2 py-0.5 rounded-md bg-primary/95 text-[10px] font-black text-primary-foreground">
                               EP {n || e.title}
                             </span>
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <p className="text-sm font-bold line-clamp-1 group-hover:text-primary transition">
-                              Episode {n || e.title}
-                            </p>
-                            <p className="text-[11px] text-muted-foreground mt-0.5 line-clamp-1">
-                              {cleanTitle(data.title)}
-                            </p>
-                            <p className="text-[10px] text-muted-foreground mt-1 flex items-center gap-1">
-                              <Clock className="h-3 w-3" /> {data.duration || "24 menit"}
-                            </p>
+                            <div className="absolute inset-x-0 bottom-0 p-2.5">
+                              <p className="text-xs sm:text-sm font-bold line-clamp-2 group-hover:text-primary transition leading-snug text-white drop-shadow">
+                                Episode {n || e.title}
+                              </p>
+                              <p className="text-[10px] text-white/70 mt-0.5 flex items-center gap-1">
+                                <Clock className="h-3 w-3" /> {data.duration || "24 menit"}
+                              </p>
+                            </div>
+                            <div className="absolute inset-0 grid place-items-center opacity-0 group-hover:opacity-100 transition">
+                              <span className="h-12 w-12 rounded-full bg-primary/90 grid place-items-center glow-primary">
+                                <Play className="h-6 w-6 text-primary-foreground fill-current" />
+                              </span>
+                            </div>
                           </div>
                         </Link>
                       </li>
