@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate, useRouter, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
-import { ArrowLeft, Play, Star, Calendar, Tv, Loader2 } from "lucide-react";
+import { ArrowLeft, Play, Star, Calendar, Tv, Loader2, Clock } from "lucide-react";
 import { svDetail } from "@/lib/sankavollerei";
 import { cleanTitle } from "@/lib/title";
 
