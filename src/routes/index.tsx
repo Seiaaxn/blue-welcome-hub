@@ -73,7 +73,7 @@ function Welcome() {
 
   return (
     <main className="mx-auto max-w-2xl px-4 py-6">
-      <header className="flex items-center justify-between rounded-2xl border border-border bg-card/70 px-5 py-4 backdrop-blur">
+      <header className="flex items-center justify-between rounded-2xl border border-border bg-card/70 px-5 py-4">
         <Logo />
         <Link
           to="/search"
@@ -85,7 +85,7 @@ function Welcome() {
         </Link>
       </header>
 
-      <section className="mt-5 rounded-2xl border border-border bg-card/70 p-5 backdrop-blur">
+      <section className="mt-5 rounded-2xl border border-border bg-card/70 p-5">
         <div className="relative overflow-hidden rounded-xl">
           <img
             src={heroImg}
@@ -172,7 +172,7 @@ function Welcome() {
         </div>
       </section>
 
-      <section className="mt-5 rounded-2xl border border-border bg-card/70 px-5 py-4 backdrop-blur">
+      <section className="mt-5 rounded-2xl border border-border bg-card/70 px-5 py-4">
         <div className="mb-2 flex items-center gap-3">
           <span className="h-6 w-1.5 rounded-full bg-primary" />
           <h2 className="text-base font-bold tracking-wider text-foreground">

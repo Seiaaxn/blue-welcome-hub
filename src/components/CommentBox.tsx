@@ -121,7 +121,7 @@ export function CommentBox({
   };
 
   return (
-    <section className="mt-10 rounded-2xl border border-border bg-card/60 p-5 backdrop-blur">
+    <section className="mt-10 rounded-2xl border border-border bg-card/60 p-5">
       <div className="mb-4 flex items-center justify-between gap-2">
         <h2 className="text-lg font-bold text-primary">{title}</h2>
         {user ? (
