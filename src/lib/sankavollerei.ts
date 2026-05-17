@@ -92,20 +92,27 @@ export type SvDetail = {
 
 export async function svDetail(animeId: string): Promise<SvDetail> {
   const d = await get<any>(`/samehadaku/anime/${animeId}`);
+  const synopsisRaw = d?.synopsis;
+  const synopsis =
+    typeof synopsisRaw === "string"
+      ? synopsisRaw
+      : Array.isArray(synopsisRaw?.paragraphs)
+      ? synopsisRaw.paragraphs.join("\n\n")
+      : "";
   return {
-    title: d?.title || animeId,
+    title: (d?.title && String(d.title)) || d?.english || d?.japanese || animeId,
     poster: d?.poster,
-    synopsis: d?.synopsis?.paragraphs?.join("\n\n") || d?.synopsis || "",
-    score: d?.score?.value || d?.score,
+    synopsis,
+    score: d?.score?.value || (typeof d?.score === "string" ? d.score : undefined),
     status: d?.status,
     type: d?.type,
     episodes: d?.episodes,
     duration: d?.duration,
     studios: d?.studios,
-    released: d?.released,
+    released: d?.aired || d?.released,
     genres: (d?.genreList || []).map((g: any) => ({ title: g.title, genreId: g.genreId })),
     episodeList: (d?.episodeList || []).map((e: any) => ({
-      title: e.title,
+      title: String(e.title ?? ""),
       episodeId: e.episodeId,
       href: e.href,
     })),

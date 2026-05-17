@@ -18,8 +18,9 @@ export const Route = createFileRoute("/anime/$animeId")({
   ),
 });
 
-function epNum(t: string): number {
-  const m = t.match(/(\d+(?:\.\d+)?)/);
+function epNum(t: unknown): number {
+  const s = String(t ?? "");
+  const m = s.match(/(\d+(?:\.\d+)?)/);
   return m ? parseFloat(m[1]) : 0;
 }
 
