@@ -30,24 +30,24 @@ const TOP_SEARCHES = [
 
 const FAQS = [
   {
-    q: "Apakah Nexzhu Menyebarkan Informasi Pribadi Pengguna?",
-    a: "Tidak. Kami Tidak Menjual Atau Membagikan Data Pribadimu Ke Pihak Ketiga. Kami Menggunakan Layanan Firebase Agar Lebih Aman.",
+    q: "Apakah data pribadi saya aman di Nexzhu?",
+    a: "Aman. Kami tidak pernah menjual atau membagikan data pribadimu ke pihak ketiga. Autentikasi ditangani oleh Firebase, dan pesan chat antar teman dienkripsi end-to-end di sisi perangkat.",
   },
   {
-    q: "Apakah Menonton Di Nexzhu Gratis?",
-    a: "Ya, Seluruh Koleksi Anime Di Nexzhu Bisa Kamu Tonton Secara Gratis. Kamu Bisa Mendukung Kami Melalui Tombol Support Us Atau Membeli Premium Ke Admin.",
+    q: "Apakah menonton anime di Nexzhu benar-benar gratis?",
+    a: "Ya, seluruh koleksi anime dapat ditonton secara gratis tanpa batas. Kamu bisa mendukung kami melalui tombol Support Us atau berlangganan Premium langsung ke admin.",
   },
   {
-    q: "Bagaimana Cara Request Anime Baru?",
-    a: "Mohon Maaf Kak, Kami Tidak Bisa Menerima Request Anime. Dikarenakan Kami Menggunakan Layanan Ketiga.",
+    q: "Bisakah saya request judul anime baru?",
+    a: "Maaf, kami belum bisa menerima request judul. Daftar anime mengikuti penyedia pihak ketiga yang kami gunakan sebagai sumber data.",
   },
   {
-    q: "Kenapa Video Kadang Lambat/Buffering?",
-    a: "Coba Ganti Server Pemutar Atau Turunkan Kualitas Video. Pastikan Koneksi Internetmu Stabil Minimal 5 Mbps Untuk Kualitas HD.",
+    q: "Kenapa video saya sering buffering atau lambat?",
+    a: "Coba pindah ke server pemutar lain atau turunkan kualitas video. Pastikan koneksi internet stabil di kecepatan minimal 5 Mbps untuk kualitas HD yang lancar.",
   },
   {
-    q: "Apakah Nexzhu Aman Dari Malware/Iklan Berbahaya?",
-    a: "Kami Berusaha Menjaga Situs Bersih. Jangan Klik Popup Mencurigakan Dan Gunakan Adblock Terpercaya Untuk Pengalaman Terbaik.",
+    q: "Apakah Nexzhu aman dari iklan berbahaya dan malware?",
+    a: "Kami berusaha menjaga situs tetap bersih dari iklan agresif. Hindari klik popup mencurigakan dan gunakan adblock terpercaya agar pengalaman menonton tetap nyaman.",
   },
 ];
 
